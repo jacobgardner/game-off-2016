@@ -1,0 +1,18 @@
+{
+  "name": "game-name",
+  "version": "0.1.0",
+  "description": "Game description",
+  "main": "index.js",
+  "scripts": {
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jacobgardner/game-off-2016.git"
+  },
+  "author": "Jacob Gardner <jacob.v.gardner@gmail.com>",
+  "private": true,
+  "bugs": {
+    "url": "https://github.com/jacobgardner/game-off-2016/issues"
+  },
+  "homepage": "https://github.com/jacobgardner/game-off-2016#readme"
+}

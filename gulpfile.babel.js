@@ -5,6 +5,9 @@ import babelify from 'babelify';
 import source from 'vinyl-source-stream';
 import buffer from 'vinyl-buffer';
 import sourcemaps from 'gulp-sourcemaps';
+import browserSyncCreate from 'browser-sync';
+
+const browserSync = browserSyncCreate.create();
 
 const SOURCE_FILES = './src/**/*.js';
 
@@ -23,4 +26,21 @@ gulp.task('js', () => {
         .pipe(gulp.dest('./dist'));
 });
 
-gulp.task('default', ['js']);
+gulp.task('js-watch', ['js'], () => {
+    gulp.watch(SOURCE_FILES, ['js', () => {
+        console.log('watchingd');
+        browserSync.reload();
+    }]);
+});
+
+gulp.task('watch', ['js-watch']);
+
+gulp.task('serve', () => {
+    browserSync.init({
+        server: {
+            baseDir: './',
+        },
+    });
+});
+
+gulp.task('default', ['watch', 'serve']);

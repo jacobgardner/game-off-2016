@@ -3,7 +3,10 @@
   "version": "0.1.0",
   "description": "Game description",
   "main": "index.js",
-  "scripts": {},
+  "scripts": {
+    "serve": "gulp serve",
+    "start": "gulp"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/jacobgardner/game-off-2016.git"
@@ -17,6 +20,7 @@
   "devDependencies": {
     "babel-preset-stage-1": "^6.16.0",
     "babelify": "^7.3.0",
+    "browser-sync": "^2.17.5",
     "browserify": "^13.1.1",
     "gulp": "^3.9.1",
     "gulp-sourcemaps": "^2.2.0",

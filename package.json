@@ -3,8 +3,7 @@
   "version": "0.1.0",
   "description": "Game description",
   "main": "index.js",
-  "scripts": {
-  },
+  "scripts": {},
   "repository": {
     "type": "git",
     "url": "git+https://github.com/jacobgardner/game-off-2016.git"
@@ -14,5 +13,15 @@
   "bugs": {
     "url": "https://github.com/jacobgardner/game-off-2016/issues"
   },
-  "homepage": "https://github.com/jacobgardner/game-off-2016#readme"
+  "homepage": "https://github.com/jacobgardner/game-off-2016#readme",
+  "devDependencies": {
+    "babel-preset-stage-1": "^6.16.0",
+    "babelify": "^7.3.0",
+    "browserify": "^13.1.1",
+    "gulp": "^3.9.1",
+    "gulp-sourcemaps": "^2.2.0",
+    "rollupify": "^0.3.5",
+    "vinyl-buffer": "^1.0.0",
+    "vinyl-source-stream": "^1.1.0"
+  }
 }

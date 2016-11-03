@@ -1,0 +1,9 @@
+@import './masthead.css';
+
+body {
+    background-color: white;
+}
+
+.gamePlayer {
+    background-color: #000000;
+}

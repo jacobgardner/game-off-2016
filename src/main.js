@@ -2,6 +2,7 @@ const canvas = document.getElementById('gameCanvas-layer0');
 
 // 1.6:1 aspect ratio
 const ASPECT_RATIO = 1.6/1;
+const UNITS_TALL = 20;
 
 
 class Renderer {
@@ -41,7 +42,7 @@ class Renderer {
 
         this.ctx.fillStyle = 'rgba(255, 255, 255, 1)';
         this.ctx.fillRect(0, 0, 1, 1);
-        this.ctx.fillRect(10*1.6 - 1, 9, 1, 1);
+        this.ctx.fillRect(UNITS_TALL*ASPECT_RATIO - 1, UNITS_TALL - 1, 1, 1);
 
 
         this.postDraw();
@@ -67,7 +68,7 @@ class Renderer {
 
         this.ctx.save();
 
-        this.ctx.scale(this.height / 10, this.height / 10);
+        this.ctx.scale(this.height / UNITS_TALL, this.height / UNITS_TALL);
 
     }
 

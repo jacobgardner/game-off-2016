@@ -39,6 +39,10 @@ class Renderer {
     gameLoop() {
         this.preDraw();
 
+        this.ctx.fillStyle = 'rgba(255, 255, 255, 1)';
+        this.ctx.fillRect(0, 0, 1, 1);
+        this.ctx.fillRect(10*1.6 - 1, 9, 1, 1);
+
 
         this.postDraw();
 
@@ -61,9 +65,15 @@ class Renderer {
         this.ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
         this.ctx.fillRect(0, 0, this.width, this.height);
 
+        this.ctx.save();
+
+        this.ctx.scale(this.height / 10, this.height / 10);
+
     }
 
     postDraw() {
+        this.ctx.restore();
+
         const now = Date.now();
         this.ctx.fillStyle = '#000000';
         this.ctx.textAlign = 'right';

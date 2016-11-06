@@ -6,6 +6,7 @@ import source from 'vinyl-source-stream';
 import buffer from 'vinyl-buffer';
 import sourcemaps from 'gulp-sourcemaps';
 import browserSyncCreate from 'browser-sync';
+import ghPages from 'gulp-gh-pages';
 
 import postcss from 'gulp-postcss';
 import autoprefixer from 'autoprefixer';
@@ -53,6 +54,11 @@ gulp.task('css-watch', ['css'], () => {
 });
 
 gulp.task('watch', ['js-watch', 'css-watch']);
+
+gulp.task('publish', () => {
+    gulp.src(['./dist/**/*', './index.html'], {base: '.'})
+        .pipe(ghPages());
+});
 
 gulp.task('serve', () => {
     browserSync.init({

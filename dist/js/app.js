@@ -9,6 +9,7 @@ var canvas = document.getElementById('gameCanvas-layer0');
 
 // 1.6:1 aspect ratio
 var ASPECT_RATIO = 1.6 / 1;
+var UNITS_TALL = 20;
 
 var Renderer = function () {
     function Renderer(canvas) {
@@ -50,6 +51,10 @@ var Renderer = function () {
         value: function gameLoop() {
             this.preDraw();
 
+            this.ctx.fillStyle = 'rgba(255, 255, 255, 1)';
+            this.ctx.fillRect(0, 0, 1, 1);
+            this.ctx.fillRect(UNITS_TALL * ASPECT_RATIO - 1, UNITS_TALL - 1, 1, 1);
+
             this.postDraw();
 
             if (!this.stopping) {
@@ -71,10 +76,16 @@ var Renderer = function () {
 
             this.ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
             this.ctx.fillRect(0, 0, this.width, this.height);
+
+            this.ctx.save();
+
+            this.ctx.scale(this.height / UNITS_TALL, this.height / UNITS_TALL);
         }
     }, {
         key: 'postDraw',
         value: function postDraw() {
+            this.ctx.restore();
+
             var now = Date.now();
             this.ctx.fillStyle = '#000000';
             this.ctx.textAlign = 'right';

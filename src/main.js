@@ -68,7 +68,10 @@ class Renderer {
 
         this.ctx.save();
 
-        this.ctx.scale(this.height / UNITS_TALL, this.height / UNITS_TALL);
+        // 20 units tall, origin starts in bottom left
+        //  positive y goes up
+        this.ctx.scale(this.height / UNITS_TALL, -1 * this.height / UNITS_TALL);
+        this.ctx.translate(0, -1 * UNITS_TALL);
 
     }
 

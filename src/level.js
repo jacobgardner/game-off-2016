@@ -15,6 +15,8 @@ export default class Level {
         this.container.ctx.translate(0, -1 * UNITS_TALL);
 
         this.container.ctx.save();
+
+        // TODO: Move camera based on viewport
     }
 
     _postDraw() {
@@ -25,8 +27,16 @@ export default class Level {
     draw() {
         this._preDraw();
 
+
         // TODO: Draw background
-        // TODO: Draw entities
+
+        // TODO: Put entities in buckets based on their
+        //  draw position.  Use the buckets to more quickly
+        //  draw what is visible and ignore what is not.
+        for (const entity of this.entities) {
+            entity.draw();
+        }
+
         // TODO: Draw HUD
 
         this.container.ctx.fillStyle = 'rgba(255, 255, 255, 1)';

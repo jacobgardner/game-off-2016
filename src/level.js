@@ -8,9 +8,9 @@ export default class Level {
     }
 
     _preDraw() {
-
         // 20 units tall, origin starts in bottom left
         //  positive y goes up
+
         this.container.ctx.scale(this.container.height / UNITS_TALL, -1 * this.container.height / UNITS_TALL);
         this.container.ctx.translate(0, -1 * UNITS_TALL);
 
@@ -30,12 +30,7 @@ export default class Level {
 
         // TODO: Draw background
 
-        // TODO: Put entities in buckets based on their
-        //  draw position.  Use the buckets to more quickly
-        //  draw what is visible and ignore what is not.
-        for (const entity of this.entities) {
-            entity.draw();
-        }
+        // TODO: Intersect viewport with entities and draw the intersection
 
         // TODO: Draw HUD
 

@@ -4,7 +4,6 @@ const canvas = document.getElementById('gameCanvas-layer0');
 const ASPECT_RATIO = 1.6/1;
 const UNITS_TALL = 20;
 
-
 class Renderer {
     constructor(canvas) {
         this.canvas = canvas;

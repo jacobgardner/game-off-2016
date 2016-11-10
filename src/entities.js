@@ -1,14 +1,12 @@
 import PhysicsBody from './physics_body.js';
 import {Rect} from './shapes.js';
 
+this.physicsBody = new PhysicsBody; 
+
 export default class platformEntity {
 	//physicsBody will go here
-	class PhysicsBody {
-        this.shape = Rect;
-        this.position = position;
-        this.velocity = velocity;
-        this.accel = accel;
-    }
+
+	this.physicsBody.constructor(Rect, position, velocity, accel)
 
 	draw(ctx){
         this.ctx.fillStyle = 'rgba(255,255,255, 0.9)';

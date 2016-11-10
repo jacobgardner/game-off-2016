@@ -20,8 +20,12 @@ class Physics {
             const physicsWindow = this.cameraBody.polygon.scale(this.distanceFactor, cameraBody.position, returnNew);
             if (physicsWindow.containsPoint(physicsBody.position)) {
                 //TODO process physics
-            } else {
-                break;
+            } else if (physicsBody.position.toArray[0] < physicsWindow.aabb().x
+                    && physicsBody.position.toArray[0] > physicsWindow.aabb().x + physicsWindow.aabb().w
+                    && physicsBody.position.toArray[1] < physicsWindow.aabb().y
+                    && physicsBody.position.toArray[1] > physicsWindow.aabb().x + physicsWindow.aabb().h) {
+
+                break;//outside of physics bounds.
             }
         }
 

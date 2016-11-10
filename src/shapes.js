@@ -23,7 +23,7 @@ export class Triangle extends Shape {
     constructor(height, base, offset, rotation) {
         super(rotation);
         this.height = height;
-        this.base = width;
+        this.base = base;
         this.offset = offset; //how much the top angle is offset from the center
             //of the base.  an offset of 0 is an isoscoles Triangle.  negative
             //offsets to the left.

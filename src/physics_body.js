@@ -1,8 +1,16 @@
+import Vec2 from 'vec2';
+import Polygon from 'polygon';
+
 export default class PhysicsBody {
     constructor(shape, position, velocity, accel) {
         this.shape = shape;
-        this.position = position;
-        this.velocity = velocity;
+        this.polygon;//TODO build polygon
+        this.position = new Vec2(position); //[x,y] origin bottom left
+        this.velocity = velocity;//
         this.accel = accel;
+    }
+
+    get x() {
+        return position[0];
     }
 }

@@ -2,12 +2,12 @@ import Vec2 from 'vec2';
 import Polygon from 'polygon';
 
 export default class PhysicsBody {
-    constructor(shape, position, velocity, accel) {
-        this.shape = shape;
-        this.polygon;//TODO build polygon
-        this.position = Vec2.fromArray(position); //[x,y] origin bottom left
+    constructor(polygon, position, velocity, accel) {
+        this.polygon = polygon;
+        this.position = position; //[x,y] origin bottom left
         this.velocity = velocity;//[units/s on x-axis, units/s on y-axis]
-        this.accel = accel;
+        this.accel = accel;// m/(s^2)
+        this.inView = false;
     }
 
     get x() {
@@ -15,9 +15,9 @@ export default class PhysicsBody {
     }
 
     get clone() {
-        const returnBody = new PhysicsBody (this.shape.clone, this.polygon.clone, this.position.toArray(), this.velocity.slice(), this.accel);
+        const returnBody = new PhysicsBody (this.polygon.clone, this.position.toArray(), this.velocity.slice(), this.accel);
+        returnBody.inVew = this.inView;
 
         return returnBody;
     }
-
 }

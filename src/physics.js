@@ -37,6 +37,8 @@ export default class Physics {
         const tempBody = physicsBody.clone;
 
         tempBody.velocity[1] -= this.gravity * this.timeStep / 1000;
+        for (let i = 0; i < tempBody.position.length; i++) {
+            tempBody.position[i] += tempBody.velocity[i] * this.timeStep / 1000;
         }
 
         tempBody.position[1] = tempBody.position[1] < 0 ? 0 : tempBody.position[1];//TEST, everything fals to the ground

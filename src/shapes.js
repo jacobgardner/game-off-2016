@@ -1,3 +1,6 @@
+/*
+ * @deprecated, will probably not use this
+ */
 class Shape {
     constructor(rotation = 0) {
         this.rotation = rotation; //rotation of shape in radians

@@ -1,3 +1,5 @@
+import Vec2 from 'vec2';
+
 export default class Physics {
     constructor(cameraBody, distanceFactor = 1.5, timeStep = 10, gravity = 9.82) {
         this.cameraBody = cameraBody;
@@ -16,13 +18,13 @@ export default class Physics {
         this.cameraSort();
 
         for (const physicsBody of this.physicsBodyArr) {
-            const physicsWindow = this.cameraBody.polygon.scale(this.distanceFactor, this.cameraBody.position, true);
-            if (physicsWindow.containsPoint(physicsBody.position)) {
+            const physicsWindow = this.cameraBody.polygon.scale(this.distanceFactor, Vec2(this.cameraBody.position), true);
+            if (physicsWindow.containsPoint(Vec2(physicsBody.position))) {
                 this.resolveBody(physicsBody);
-            } else if (physicsBody.position.toArray[0] < physicsWindow.aabb().x
-                    && physicsBody.position.toArray[0] > physicsWindow.aabb().x + physicsWindow.aabb().w
-                    && physicsBody.position.toArray[1] < physicsWindow.aabb().y
-                    && physicsBody.position.toArray[1] > physicsWindow.aabb().x + physicsWindow.aabb().h) {
+            } else if (physicsBody.postion[0] < physicsWindow.aabb().x
+                    && physicsBody.postion[0] > physicsWindow.aabb().x + physicsWindow.aabb().w
+                    && physicsBody.postion[1] < physicsWindow.aabb().y
+                    && physicsBody.postion[1] > physicsWindow.aabb().x + physicsWindow.aabb().h) {
 
                 break;//outside of physics bounds.
             }
@@ -33,16 +35,19 @@ export default class Physics {
 
     resolveBody(physicsBody) {
         const tempBody = physicsBody.clone;
+
         tempBody.velocity[1] -= this.gravity * this.timeStep / 1000;
-        tempBody.position.add(tempBody.velocity[0] * this.timeStep / 1000, tempBody.velocity[1] * this.timeStep / 1000);
+        }
+
+        tempBody.position[1] = tempBody.position[1] < 0 ? 0 : tempBody.position[1];//TEST, everything fals to the ground
 
         //TODO collisions;
-
+        this.inView = true; //TEST  Will possibly be removed later for better alternative.
         physicsBody = tempBody;
     }
 
     cameraSort() {
-        this.physicsBodyArr.sort((a,b) => a.position.distance(this.cameraBody.position) - b.position.distance(this.cameraBody.position));//sort by closest to cameraBody
+        this.physicsBodyArr.sort((a,b) => Vec2(a.position).distance(Vec2(this.cameraBody.position)) - Vec2(b.position).distance(Vec2(this.cameraBody.position)));//sort by closest to cameraBody
 
         return this;
     }

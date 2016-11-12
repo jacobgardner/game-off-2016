@@ -1,6 +1,5 @@
 import AABB from '../aabb';
 import Vec2 from 'victor';
-// TODO: This may be wrong
 // import PhysicsBody from '../physics-body';
 
 const PLAYER_WIDTH = 0.5;
@@ -22,15 +21,13 @@ const KEYBINDINGS = {
 // Don't hate the player.  Hate the game.
 export default class Player {
     /**
-     * [constructor description]
-     * @param  {[type]} origin The center, bottom of the player
-     * @return {[type]}        [description]
+     * @param  {Vec2} origin The center, bottom of the player
      */
     constructor(origin) {
         const lowerLeft = Vec2(origin.x - PLAYER_WIDTH / 2, origin.y);
         const upperRight = Vec2(origin.x + PLAYER_WIDTH / 2, origin.y + PLAYER_HEIGHT);
 
-        // TODO: Lookup this physics shit later shit later
+        // TODO: Lookup this physics shit later
         // this.physicsBody = new PhysicsBody();
         this.physicsBody = {};
         this.physicsBody.aabb = new AABB(lowerLeft, upperRight);
@@ -93,12 +90,6 @@ export default class Player {
                 this.processAction(action, isActive);
             }
         }
-
-        // for (const key in KEYBINDINGS) {
-        //     if (this.keyStates[key]) {
-        //         this.processAction(KEYBINDINGS[key]);
-        //     }
-        // }
     }
 
     simulate() {
@@ -113,6 +104,7 @@ export default class Player {
         } else {
             // NOTES: Safari does not support .key.  So we *SHOULD* probably
             //  make a table that translates .keyCode => .key
+            //  For now, fuck macs
             throw new Error('Browser must currently support .key property on KeyboardEvent');
         }
     }

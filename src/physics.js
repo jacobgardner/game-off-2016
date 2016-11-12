@@ -1,12 +1,14 @@
 import Vec2 from 'vec2';
+import QuadTree from 'simple-quadtree';
 
 export default class Physics {
-    constructor(cameraBody, distanceFactor = 1.5, timeStep = 10, gravity = 9.82) {
+    constructor(cameraBody, levelBoundArr, distanceFactor = 1.5, timeStep = 10, gravity = 9.82) {
         this.cameraBody = cameraBody;
         this.physicsBodyArr = new Array();
         this.distanceFactor = distanceFactor;
         this.timeStep = timeStep;
         this.gravity = gravity; //units/(s^2)
+        this.quadTree = new QuadTree(0, 0, levelBoundArr[0], levelBoundArr[1]);
     }
 
     addBody(physicsBody) {
@@ -15,16 +17,18 @@ export default class Physics {
     }
 
     resolveView() {
+        this.quadTree.clear();
         this.cameraSort();
+        const physicsWindow = this.cameraBody.polygon.scale(this.distanceFactor, Vec2(this.cameraBody.position), true);
 
         for (const physicsBody of this.physicsBodyArr) {
-            const physicsWindow = this.cameraBody.polygon.scale(this.distanceFactor, Vec2(this.cameraBody.position), true);
-            if (physicsWindow.containsPoint(Vec2(physicsBody.position))) {
-                this.resolveBody(physicsBody, physicsWindow);
+            physicsBody.inView = this.inView(physicsBody);//change to collides()
+            if (physicsWindow.containsPoint(Vec2(physicsBody.position))) {//change to collides()
+                this.quadTree.put(physicsBody);
             }
-
-            physicsBody.inView = this.inView(physicsBody);
         }
+
+        
 
         return this;
     }
@@ -50,9 +54,9 @@ export default class Physics {
     }
 
     inView(physicsBody, physicsWindow) {
-        return (physicsBody.postion[0] < physicsWindow.aabb().x
-            || physicsBody.postion[0] > physicsWindow.aabb().x + physicsWindow.aabb().w)
-            && (physicsBody.postion[1] < physicsWindow.aabb().y
-            || physicsBody.postion[1] > physicsWindow.aabb().x + physicsWindow.aabb().h);
+        return (physicsBody.postion[0] < physicsWindow..x
+            || physicsBody.postion[0] > physicsWindow.x + physicsWindow.w)
+            && (physicsBody.postion[1] < physicsWindow.y
+            || physicsBody.postion[1] > physicsWindow.y + physicsWindow.h);
     }
 }

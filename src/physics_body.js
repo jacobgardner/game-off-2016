@@ -1,3 +1,4 @@
+import AABB from './aabb';
 import Vec2 from 'vec2';
 import Polygon from 'polygon';
 

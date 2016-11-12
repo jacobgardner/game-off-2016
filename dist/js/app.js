@@ -1339,11 +1339,6 @@ function _interopDefault(ex) {
 
 var Vec2 = _interopDefault(require('victor'));
 
-// 1.6:1 aspect ratio
-var ASPECT_RATIO = 1.6 / 1;
-
-var SIMULATION_TIMESTEP = 10;
-
 var AABB = function () {
     function AABB(lowerLeft, upperRight) {
         _classCallCheck(this, AABB);
@@ -1396,9 +1391,6 @@ var AABB = function () {
     return AABB;
 }();
 
-// TODO: This may be wrong
-// import PhysicsBody from '../physics-body';
-
 var PLAYER_WIDTH = 0.5;
 var PLAYER_HEIGHT = 1;
 var MOVE_SPEED = 0.4;
@@ -1419,9 +1411,7 @@ var KEYBINDINGS = {
 
 var Player = function () {
     /**
-     * [constructor description]
-     * @param  {[type]} origin The center, bottom of the player
-     * @return {[type]}        [description]
+     * @param  {Vec2} origin The center, bottom of the player
      */
     function Player(origin) {
         _classCallCheck(this, Player);
@@ -1429,7 +1419,7 @@ var Player = function () {
         var lowerLeft = Vec2(origin.x - PLAYER_WIDTH / 2, origin.y);
         var upperRight = Vec2(origin.x + PLAYER_WIDTH / 2, origin.y + PLAYER_HEIGHT);
 
-        // TODO: Lookup this physics shit later shit later
+        // TODO: Lookup this physics shit later
         // this.physicsBody = new PhysicsBody();
         this.physicsBody = {};
         this.physicsBody.aabb = new AABB(lowerLeft, upperRight);
@@ -1523,12 +1513,6 @@ var Player = function () {
                         this.processAction(action, isActive);
                     }
                 }
-
-                // for (const key in KEYBINDINGS) {
-                //     if (this.keyStates[key]) {
-                //         this.processAction(KEYBINDINGS[key]);
-                //     }
-                // }
             } catch (err) {
                 _didIteratorError = true;
                 _iteratorError = err;
@@ -1558,6 +1542,7 @@ var Player = function () {
             } else {
                 // NOTES: Safari does not support .key.  So we *SHOULD* probably
                 //  make a table that translates .keyCode => .key
+                //  For now, fuck macs
                 throw new Error('Browser must currently support .key property on KeyboardEvent');
             }
         }
@@ -1588,13 +1573,51 @@ var Player = function () {
     return Player;
 }();
 
-var UNITS_TALL$$1 = 20;
+var Platform = function () {
+    function Platform(origin) {
+        _classCallCheck(this, Platform);
+
+        this.origin = origin;
+    }
+
+    _createClass(Platform, [{
+        key: 'draw',
+        value: function draw(ctx) {
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(this.origin.x, this.origin.y, 1, 1);
+        }
+    }, {
+        key: 'simulate',
+        value: function simulate() {}
+    }]);
+
+    return Platform;
+}();
+
+var UNITS_TALL = 20;
 
 var Level = function () {
-    function Level() {
+    function Level(levelFile) {
+        var _this = this;
+
         _classCallCheck(this, Level);
 
-        this.entities = [new Player(Vec2(5, 5))];
+        this.entities = [];
+
+        levelFile.forEach(function (row, y) {
+            y = UNITS_TALL - y;
+
+            Array.prototype.forEach.call(row, function (unit, x) {
+                switch (unit.toLowerCase()) {
+                    case 'x':
+                        _this.entities.push(new Platform(Vec2(x, y)));
+                        break;
+                    case 'p':
+                        _this.entities.push(new Player(Vec2(x, y)));
+                        break;
+                }
+            });
+        });
     }
 
     _createClass(Level, [{
@@ -1603,8 +1626,8 @@ var Level = function () {
             // 20 units tall, origin starts in bottom left
             //  positive y goes up
 
-            this.container.ctx.scale(this.container.height / UNITS_TALL$$1, -1 * this.container.height / UNITS_TALL$$1);
-            this.container.ctx.translate(0, -1 * UNITS_TALL$$1);
+            this.container.ctx.scale(this.container.height / UNITS_TALL, -1 * this.container.height / UNITS_TALL);
+            this.container.ctx.translate(0, -1 * UNITS_TALL);
 
             this.container.ctx.save();
 
@@ -1653,10 +1676,6 @@ var Level = function () {
                 }
             }
 
-            this.container.ctx.fillStyle = 'rgba(255, 255, 255, 1)';
-            this.container.ctx.fillRect(0, 0, 1, 1);
-            this.container.ctx.fillRect(UNITS_TALL$$1 * ASPECT_RATIO - 1, UNITS_TALL$$1 - 1, 1, 1);
-
             this._postDraw();
         }
     }, {
@@ -1691,6 +1710,13 @@ var Level = function () {
 
     return Level;
 }();
+
+// 1.6:1 aspect ratio
+
+
+var ASPECT_RATIO = 1.6 / 1;
+
+var SIMULATION_TIMESTEP = 10;
 
 var GameContainer = function () {
     function GameContainer(canvas, initialScene) {
@@ -1845,7 +1871,6 @@ var GameContainer = function () {
         key: 'start',
         value: function start() {
             this.stopping = false;
-            console.log('Starting');
 
             window.requestAnimationFrame(this.renderLoop);
             this.simulationLoop();
@@ -1864,10 +1889,12 @@ var GameContainer = function () {
     return GameContainer;
 }();
 
+var level = ['                                                                                                                                       ', '                                                                                                                                       ', '                                                                                                                                       ', '                                                                                                                                       ', '                                                                                                                                       ', '                                                                                                                                       ', '                                                                                                                                       ', '                                                                                                                                       ', '                                                                                                                                       ', '                                                                                                                                       ', '                                                                                                                                       ', '                                                                                                                                       ', '                                                                                                                                       ', '                                                                                                                                       ', '                                                                                                                                       ', '       xxxxxxxx                                                                                                                        ', '                                                                                                                                       ', '    P                                                                                                                                  ', 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'];
+
 var canvas = document.getElementById('gameCanvas-layer0');
 
 var game = new GameContainer(canvas);
-game.pushScene(new Level());
+game.pushScene(new Level(level));
 game.start();
 
 },{"victor":1}]},{},[2])

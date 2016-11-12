@@ -1,4 +1,4 @@
-import {ASPECT_RATIO} from './game-container';
+import {ASPECT_RATIO} from './config';
 const UNITS_TALL = 20;
 
 import Player from './entities/player';

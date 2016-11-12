@@ -34,6 +34,7 @@ export default class Player {
         // this.physicsBody = new PhysicsBody();
         this.physicsBody = {};
         this.physicsBody.aabb = new AABB(lowerLeft, upperRight);
+        this.physicsBody.velocity = Vec2(0, 0);
 
         this.recordKeyDown = this.recordKeyDown.bind(this);
         this.recordKeyUp = this.recordKeyUp.bind(this);
@@ -61,12 +62,12 @@ export default class Player {
                 velocity.x = isActive ? -MOVE_SPEED : 0;
 
                 // TODO: Remove me once physics is merged
-                this.physicsBody.aabb.add(Vec2(-MOVE_SPEED, 0));
+                this.physicsBody.aabb.add(Vec2(-MOVE_SPEED * 0.1, 0));
                 break;
             case 'RIGHT':
                 velocity.x = isActive ? MOVE_SPEED : 0;
 
-                this.physicsBody.aabb.add(Vec2(MOVE_SPEED, 0));
+                this.physicsBody.aabb.add(Vec2(MOVE_SPEED * 0.1, 0));
                 break;
             case 'JUMP':
                 // TODO: We'll need to actually check to see if we're falling or not

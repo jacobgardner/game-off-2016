@@ -1,4 +1,4 @@
-import { SIMULATION_TIMESTEP } from './config';
+import { SIMULATION_TIMESTEP, ASPECT_RATIO } from './config';
 
 export default class GameContainer {
     constructor(canvas, initialScene) {
@@ -103,6 +103,7 @@ export default class GameContainer {
 
     start() {
         this.stopping = false;
+        console.log('Starting');
 
         window.requestAnimationFrame(this.renderLoop);
         this.simulationLoop();

@@ -18,17 +18,26 @@ export default class Physics {
 
     resolveView() {
         this.quadTree.clear();
-        this.cameraSort();
         const physicsWindow = this.cameraBody.polygon.scale(this.distanceFactor, Vec2(this.cameraBody.position), true);
 
         for (const physicsBody of this.physicsBodyArr) {
-            physicsBody.inView = this.inView(physicsBody);//change to collides()
-            if (physicsWindow.containsPoint(Vec2(physicsBody.position))) {//change to collides()
-                this.quadTree.put(physicsBody);
-            }
+            physicsBody.inView = this.collides(physicsBody, physicsWindow);//change to collides()
+            this.resolveBody(physicsBody);
+
+            this.quadTree.put(physicsBody);
         }
 
-        
+        for(physicsBody of this.physicsBodyArr) {
+            if (physicsBody.inView) {
+                const possibleCollidersArr = new Array();
+
+                for (collider of possibleCollidersArr) {
+                    if(this.collides(physicsBody, collider)) {
+                        //stuff
+                    }
+                }
+            }
+        }
 
         return this;
     }
@@ -53,10 +62,10 @@ export default class Physics {
         return this;
     }
 
-    inView(physicsBody, physicsWindow) {
-        return (physicsBody.postion[0] < physicsWindow..x
-            || physicsBody.postion[0] > physicsWindow.x + physicsWindow.w)
-            && (physicsBody.postion[1] < physicsWindow.y
-            || physicsBody.postion[1] > physicsWindow.y + physicsWindow.h);
+    collides(physicsBody1, physicsBody2) {
+        return !(physicsBody1.x + physicsBody1.w < physicsBody2.x
+            || physicsBody1.x > physicsBody2.x + physicsBody2.w
+            || physicsBody1.y + physicsBody1.h < physicsBody2.y
+            || physicsBody1.y > physicsBody2.y + physicsBody2.h);
     }
 }

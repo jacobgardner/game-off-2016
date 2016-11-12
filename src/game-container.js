@@ -103,7 +103,6 @@ export default class GameContainer {
 
     start() {
         this.stopping = false;
-        console.log('Starting');
 
         window.requestAnimationFrame(this.renderLoop);
         this.simulationLoop();

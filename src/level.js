@@ -1,10 +1,13 @@
 import {ASPECT_RATIO} from './game-container';
 const UNITS_TALL = 20;
 
+import Player from './entities/player';
+import Vec2 from 'victor';
+
 
 export default class Level {
     constructor() {
-        this.entities = [];
+        this.entities = [new Player(Vec2(5, 5))];
     }
 
     _preDraw() {
@@ -27,7 +30,11 @@ export default class Level {
     draw() {
         this._preDraw();
 
+        const drawingContext = this.container.ctx;
 
+        for (const entity of this.entities) {
+            entity.draw(drawingContext);
+        }
         // TODO: Draw background
 
         // TODO: Intersect viewport with entities and draw the intersection
@@ -39,5 +46,11 @@ export default class Level {
         this.container.ctx.fillRect(UNITS_TALL * ASPECT_RATIO - 1, UNITS_TALL - 1, 1, 1);
 
         this._postDraw();
+    }
+
+    simulate() {
+        for (const entity of this.entities) {
+            entity.simulate();
+        }
     }
 }

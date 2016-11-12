@@ -25,7 +25,8 @@ module.exports = {
         'space-before-blocks': ['error'],
         indent: [
             'error',
-            4
+            4,
+            { SwitchCase: 1 },
         ],
         'linebreak-style': 0,
         quotes: [

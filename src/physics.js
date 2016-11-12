@@ -20,14 +20,10 @@ export default class Physics {
         for (const physicsBody of this.physicsBodyArr) {
             const physicsWindow = this.cameraBody.polygon.scale(this.distanceFactor, Vec2(this.cameraBody.position), true);
             if (physicsWindow.containsPoint(Vec2(physicsBody.position))) {
-                this.resolveBody(physicsBody);
-            } else if (physicsBody.postion[0] < physicsWindow.aabb().x
-                    && physicsBody.postion[0] > physicsWindow.aabb().x + physicsWindow.aabb().w
-                    && physicsBody.postion[1] < physicsWindow.aabb().y
-                    && physicsBody.postion[1] > physicsWindow.aabb().x + physicsWindow.aabb().h) {
-
-                physicsBody.inView = false;
+                this.resolveBody(physicsBody, physicsWindow);
             }
+
+            physicsBody.inView = this.inView(physicsBody);
         }
 
         return this;
@@ -44,7 +40,6 @@ export default class Physics {
         tempBody.position[1] = tempBody.position[1] < 0 ? 0 : tempBody.position[1];//TEST, everything fals to the ground
 
         //TODO collisions;
-        tempBody.inView = true; //TEST  Will possibly be removed later for better alternative.
         physicsBody = tempBody;
     }
 
@@ -52,5 +47,12 @@ export default class Physics {
         this.physicsBodyArr.sort((a,b) => Vec2(a.position).distance(Vec2(this.cameraBody.position)) - Vec2(b.position).distance(Vec2(this.cameraBody.position)));//sort by closest to cameraBody
 
         return this;
+    }
+
+    inView(physicsBody, physicsWindow) {
+        return (physicsBody.postion[0] < physicsWindow.aabb().x
+            || physicsBody.postion[0] > physicsWindow.aabb().x + physicsWindow.aabb().w)
+            && (physicsBody.postion[1] < physicsWindow.aabb().y
+            || physicsBody.postion[1] > physicsWindow.aabb().x + physicsWindow.aabb().h);
     }
 }

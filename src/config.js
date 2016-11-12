@@ -1,0 +1,1 @@
+export const SIMULATION_TIMESTEP = 10;

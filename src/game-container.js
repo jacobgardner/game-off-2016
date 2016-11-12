@@ -1,5 +1,4 @@
-// 1.6:1 aspect ratio
-export const ASPECT_RATIO = 1.6/1;
+import { SIMULATION_TIMESTEP } from './config';
 
 export default class GameContainer {
     constructor(canvas, initialScene) {
@@ -7,7 +6,9 @@ export default class GameContainer {
         this.ctx = canvas.getContext('2d');
         this.stopping = false;
 
-        this.gameLoop = this.gameLoop.bind(this);
+        this.renderLoop = this.renderLoop.bind(this);
+        this.simulationLoop = this.simulationLoop.bind(this);
+
         this.resizeCanvas = this.resizeCanvas.bind(this);
         this.lastFrameTime = Date.now();
         this.FPS = 0;
@@ -71,7 +72,7 @@ export default class GameContainer {
         this.lastFrameTime = now;
     }
 
-    gameLoop() {
+    renderLoop() {
         this.preDraw();
 
         for (const scene of this.sceneStack) {
@@ -81,14 +82,31 @@ export default class GameContainer {
         this.postDraw();
 
         if (!this.stopping) {
-            window.requestAnimationFrame(this.gameLoop);
-        } else {
-            this.stopping = false;
+            window.requestAnimationFrame(this.renderLoop);
         }
     }
 
+    simulationLoop() {
+        const startTime = window.performance.now();
+
+        for (const scene of this.sceneStack) {
+            scene.simulate();
+        }
+
+        const now = window.performance.now();
+
+        if (!this.stopping) {
+            setTimeout(this.simulationLoop, Math.max(0, SIMULATION_TIMESTEP - (now - startTime)));
+        }
+
+    }
+
     start() {
-        window.requestAnimationFrame(this.gameLoop);
+        this.stopping = false;
+
+        window.requestAnimationFrame(this.renderLoop);
+        this.simulationLoop();
+
         window.addEventListener('resize', this.resizeCanvas);
         this.resizeCanvas();
     }

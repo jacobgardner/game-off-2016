@@ -29,6 +29,9 @@ gulp.task('js', ['js-lint'], () => {
     });
 
     return b.bundle()
+        .on('error', (err) => {
+            console.error(err.stack);
+        })
         .pipe(source('app.js'))
         .pipe(buffer())
         .pipe(sourcemaps.init({loadMaps: true}))

@@ -19,13 +19,21 @@ export default class PhysicsBody {
     }
 
     get x() {
-        return this.position[0];
+        return this.polygon.aabb().x;
     }
 
     get y() {
-        return this.postion[1];
+        return this.polygon.aabb().y;
     }
 
+    get w() {
+        return this.polygon.aabb().w;
+    }
+
+    get h() {
+        return this.polygon.aabb().h;
+    }
+    
     get clone() {
         const returnBody = new PhysicsBody (this.polygon.clone, this.position.toArray(), this.velocity.slice(), this.accel);
         returnBody.inVew = this.inView;

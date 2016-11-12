@@ -26,7 +26,7 @@ export default class Physics {
                     && physicsBody.postion[1] < physicsWindow.aabb().y
                     && physicsBody.postion[1] > physicsWindow.aabb().x + physicsWindow.aabb().h) {
 
-                break;//outside of physics bounds.
+                physicsBody.inView = false;
             }
         }
 
@@ -44,7 +44,7 @@ export default class Physics {
         tempBody.position[1] = tempBody.position[1] < 0 ? 0 : tempBody.position[1];//TEST, everything fals to the ground
 
         //TODO collisions;
-        this.inView = true; //TEST  Will possibly be removed later for better alternative.
+        tempBody.inView = true; //TEST  Will possibly be removed later for better alternative.
         physicsBody = tempBody;
     }
 

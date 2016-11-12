@@ -40,4 +40,8 @@ export default class Level {
 
         this._postDraw();
     }
+
+    simulate() {
+
+    }
 }

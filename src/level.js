@@ -5,7 +5,8 @@ import Viewport from './viewport';
 
 import { findAppropriateWidth } from './utils';
 
-const UNITS_TALL = 20;
+import { UNITS_TALL } from './config';
+const UNITS_WIDE = findAppropriateWidth(UNITS_TALL);
 
 
 export default class Level {
@@ -28,7 +29,8 @@ export default class Level {
             });
         });
 
-        this.viewport = new Viewport(Vec2(findAppropriateWidth(UNITS_TALL) / 2, UNITS_TALL / 2), UNITS_TALL, 5);
+        this.viewport = new Viewport(Vec2(UNITS_WIDE / 2, UNITS_TALL / 2), UNITS_TALL / 5, 1);
+        this.showViewport = true;
     }
 
     _preDraw() {
@@ -38,7 +40,11 @@ export default class Level {
         this.container.ctx.scale(this.container.height / UNITS_TALL, -1 * this.container.height / UNITS_TALL);
         this.container.ctx.translate(0, -UNITS_TALL);
 
-        this.container.ctx.translate(-this.viewport.aabb.lowerLeft.x, this.viewport.aabb.lowerLeft.y);
+
+        const adjustedWidth = UNITS_WIDE / this.viewport.aabb.width;
+        const adjustedHeight = UNITS_TALL / this.viewport.aabb.height;
+        this.container.ctx.scale(adjustedWidth, adjustedHeight);
+        this.container.ctx.translate(-this.viewport.aabb.lowerLeft.x, -this.viewport.aabb.lowerLeft.y);
 
         this.container.ctx.save();
 
@@ -46,6 +52,11 @@ export default class Level {
     }
 
     _postDraw() {
+
+        if (this.showViewport) {
+            this.container.ctx.fillStyle = 'rgba(255, 255, 255, 0.1)';
+            this.container.ctx.fillRect(this.viewport.aabb.lowerLeft.x, this.viewport.aabb.lowerLeft.y, this.viewport.aabb.width, this.viewport.aabb.height);
+        }
 
         this.container.ctx.restore();
     }

@@ -1685,7 +1685,7 @@ var Level = function () {
             });
         });
 
-        this.viewport = new Viewport(Vec2(UNITS_WIDE / 2, UNITS_TALL / 2), UNITS_TALL * 20, 1);
+        this.viewport = new Viewport(Vec2(UNITS_WIDE / 2, UNITS_TALL / 2), UNITS_TALL * 0.8, 1);
         this.showViewport = true;
     }
 

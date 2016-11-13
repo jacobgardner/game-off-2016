@@ -1346,7 +1346,7 @@ var AABB = function () {
         this._lowerLeft = lowerLeft;
         this._upperRight = upperRight;
 
-        this._calculateDimensions;
+        this._calculateDimensions();
     }
 
     _createClass(AABB, [{
@@ -1598,7 +1598,7 @@ var Platform = function () {
 
 
 var ASPECT_RATIO = 1.6 / 1;
-
+var UNITS_TALL = 20;
 var SIMULATION_TIMESTEP = 10;
 
 function findAppropriateWidth(height) {
@@ -1658,7 +1658,7 @@ var Viewport = function () {
     return Viewport;
 }();
 
-var UNITS_TALL = 20;
+var UNITS_WIDE = findAppropriateWidth(UNITS_TALL);
 
 var Level = function () {
     function Level(levelFile) {
@@ -1684,7 +1684,8 @@ var Level = function () {
             });
         });
 
-        this.viewport = new Viewport(Vec2(findAppropriateWidth(UNITS_TALL) / 2, UNITS_TALL / 2), UNITS_TALL, 5);
+        this.viewport = new Viewport(Vec2(UNITS_WIDE / 2, UNITS_TALL / 2), UNITS_TALL / 5, 1);
+        this.showViewport = true;
     }
 
     _createClass(Level, [{
@@ -1696,7 +1697,10 @@ var Level = function () {
             this.container.ctx.scale(this.container.height / UNITS_TALL, -1 * this.container.height / UNITS_TALL);
             this.container.ctx.translate(0, -UNITS_TALL);
 
-            this.container.ctx.translate(-this.viewport.aabb.lowerLeft.x, this.viewport.aabb.lowerLeft.y);
+            var adjustedWidth = UNITS_WIDE / this.viewport.aabb.width;
+            var adjustedHeight = UNITS_TALL / this.viewport.aabb.height;
+            this.container.ctx.scale(adjustedWidth, adjustedHeight);
+            this.container.ctx.translate(-this.viewport.aabb.lowerLeft.x, -this.viewport.aabb.lowerLeft.y);
 
             this.container.ctx.save();
 
@@ -1705,6 +1709,11 @@ var Level = function () {
     }, {
         key: '_postDraw',
         value: function _postDraw() {
+
+            if (this.showViewport) {
+                this.container.ctx.fillStyle = 'rgba(255, 255, 255, 0.1)';
+                this.container.ctx.fillRect(this.viewport.aabb.lowerLeft.x, this.viewport.aabb.lowerLeft.y, this.viewport.aabb.width, this.viewport.aabb.height);
+            }
 
             this.container.ctx.restore();
         }

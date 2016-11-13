@@ -1393,7 +1393,7 @@ var AABB = function () {
 
 var PLAYER_WIDTH = 0.5;
 var PLAYER_HEIGHT = 1;
-var MOVE_SPEED = 0.4;
+var MOVE_SPEED = 0.8;
 var JUMP_VELOCITY = 1;
 
 var KEYBINDINGS = {
@@ -1594,6 +1594,70 @@ var Platform = function () {
     return Platform;
 }();
 
+// 1.6:1 aspect ratio
+
+
+var ASPECT_RATIO = 1.6 / 1;
+
+var SIMULATION_TIMESTEP = 10;
+
+function findAppropriateWidth(height) {
+    return ASPECT_RATIO * height;
+}
+
+var Viewport = function () {
+    /**
+     * [constructor description]
+     * @param  {Vec2} center      Center of the viewport
+     * @param  {Number} minHeight   Initial height (and minHeight) of the viewport
+     * @param  {Number} buffer      The buffer area around the player to push the viewport around
+     */
+    function Viewport(center, minHeight) {
+        var buffer = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 1;
+
+        _classCallCheck(this, Viewport);
+
+        var width = findAppropriateWidth(minHeight);
+        this.aabb = new AABB(Vec2(center.x - width / 2, center.y - minHeight / 2), Vec2(center.x + width / 2, center.y + minHeight / 2));
+        this.buffer = buffer;
+    }
+
+    /**
+     * This updates the viewport position based on the previous size
+     *     and the position of the player
+     * @param  {PhysicsBody} physicsBody The player's physicsBody
+     */
+
+
+    _createClass(Viewport, [{
+        key: 'updateViewport',
+        value: function updateViewport(physicsBody) {
+            var _physicsBody$aabb = physicsBody.aabb,
+                upperRight = _physicsBody$aabb.upperRight,
+                lowerLeft = _physicsBody$aabb.lowerLeft;
+
+
+            var push = Vec2(0, 0);
+
+            if (upperRight.x + this.buffer > this.aabb.upperRight.x) {
+                push.x = upperRight.x + this.buffer - this.aabb.upperRight.x;
+            } else if (lowerLeft.x - this.buffer < this.aabb.lowerLeft.x) {
+                push.x = lowerLeft.x - this.buffer - this.aabb.lowerLeft.x;
+            }
+
+            if (upperRight.y + this.buffer > this.aabb.upperRight.y) {
+                push.y = upperRight.y + this.buffer - this.aabb.upperRight.y;
+            } else if (lowerLeft.y - this.buffer < this.aabb.lowerLeft.y) {
+                push.y = lowerLeft.y - this.buffer - this.aabb.lowerLeft.y;
+            }
+
+            this.aabb.add(push);
+        }
+    }]);
+
+    return Viewport;
+}();
+
 var UNITS_TALL = 20;
 
 var Level = function () {
@@ -1613,11 +1677,14 @@ var Level = function () {
                         _this.entities.push(new Platform(Vec2(x, y)));
                         break;
                     case 'p':
-                        _this.entities.push(new Player(Vec2(x, y)));
+                        _this.player = new Player(Vec2(x, y));
+                        _this.entities.push(_this.player);
                         break;
                 }
             });
         });
+
+        this.viewport = new Viewport(Vec2(findAppropriateWidth(UNITS_TALL) / 2, UNITS_TALL / 2), UNITS_TALL, 5);
     }
 
     _createClass(Level, [{
@@ -1627,7 +1694,9 @@ var Level = function () {
             //  positive y goes up
 
             this.container.ctx.scale(this.container.height / UNITS_TALL, -1 * this.container.height / UNITS_TALL);
-            this.container.ctx.translate(0, -1 * UNITS_TALL);
+            this.container.ctx.translate(0, -UNITS_TALL);
+
+            this.container.ctx.translate(-this.viewport.aabb.lowerLeft.x, this.viewport.aabb.lowerLeft.y);
 
             this.container.ctx.save();
 
@@ -1705,18 +1774,13 @@ var Level = function () {
                     }
                 }
             }
+
+            this.viewport.updateViewport(this.player.physicsBody);
         }
     }]);
 
     return Level;
 }();
-
-// 1.6:1 aspect ratio
-
-
-var ASPECT_RATIO = 1.6 / 1;
-
-var SIMULATION_TIMESTEP = 10;
 
 var GameContainer = function () {
     function GameContainer(canvas, initialScene) {

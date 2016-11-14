@@ -1,24 +1,16 @@
 import AABB from './aabb';
-import Vec2 from 'vec2';
-import Polygon from 'polygon';
+import Victor from 'victor';
 
 export default class PhysicsBody {
-    constructor(aabb, polygon, position, velocity, accel) {
+    constructor(aabb, position, velocity, accel) {
         this.aabb = aabb;
-        this.position = position.slice(); //[x,y] origin bottom left
-        this._polygon = polygon.translate(polygon.center.negate(), true);
+        const widthHeight = new Victor(this.w, this.h);
+        this.aabb.add(position.subtract(this.aabb.lowerLeft), position.subtract(this.aabb.upperRight).add(widthHeight));
+
         this.velocity = velocity.slice();//[units/s on x-axis, units/s on y-axis]
-        this.accel = accel;// m/(s^2)
+        this.accel = accel;// Victor {x: u/(s^2), y: u/(s^2)}
         this.inView = false;
     }
-
-    /*get polygon() {
-        return this._polygon.translate(Vec2.fromArray(this.position), true);
-    }
-
-    set polygon(newPolygon) {
-        this._polygon = newPolygon.translate(newPolygon.center.negate(), true);
-    }*/
 
     get x() {
         return this.aabb.lowerLeft.x;
@@ -36,8 +28,8 @@ export default class PhysicsBody {
         return this.aabb.upperRight.height;
     }
 
-    get clone() {
-        const returnBody = new PhysicsBody (this._polygon.clone, this.position.toArray(), this.velocity.slice(), this.accel);
+    clone() {
+        const returnBody = new PhysicsBody (new AABB(this.lowerLeft.clone(), this.upperRight.clone()), new Victor(this.x, this.y), this.velocity.slice(), this.accel.clone());
         returnBody.inVew = this.inView;
 
         return returnBody;

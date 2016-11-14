@@ -1,71 +1,81 @@
-import Vec2 from 'vec2';
 import QuadTree from 'simple-quadtree';
+import Victor from 'victor';
 
 export default class Physics {
-    constructor(cameraBody, levelBoundArr, distanceFactor = 1.5, timeStep = 10, gravity = 9.82) {
-        this.cameraBody = cameraBody;
+    constructor(levelBoundArr, timeStep = 10, gravity = 9.82) {
         this.physicsBodyArr = new Array();
-        this.distanceFactor = distanceFactor;
-        this.timeStep = timeStep;
+        this.timeStepfactor = timeStep/1000;
         this.gravity = gravity; //units/(s^2)
         this.quadTree = new QuadTree(0, 0, levelBoundArr[0], levelBoundArr[1]);
     }
 
     addBody(physicsBody) {
+        physicsBody.quadID = this.physicsBodyArr.length;
         this.physicsBodyArr.push(physicsBody);
-        this.cameraSort();
+        this.quadTree.put(physicsBody);
     }
 
-    resolveView() {
-        this.quadTree.clear();
-        const physicsWindow = this.cameraBody.polygon.scale(this.distanceFactor, Vec2(this.cameraBody.position), true);
-
+    resolveArea(viewPortPhysicsBody) {
         for (const physicsBody of this.physicsBodyArr) {
-            physicsBody.inView = this.collides(physicsBody, physicsWindow);//change to collides()
+            physicsBody.inView = this.collides(physicsBody, viewPortPhysicsBody);
             this.resolveBody(physicsBody);
-
-            this.quadTree.put(physicsBody);
-        }
-
-        for(physicsBody of this.physicsBodyArr) {
-            if (physicsBody.inView) {
-                const possibleCollidersArr = new Array();
-
-                for (collider of possibleCollidersArr) {
-                    if(this.collides(physicsBody, collider)) {
-                        //stuff
-                    }
-                }
-            }
         }
 
         return this;
     }
 
     resolveBody(physicsBody) {
-        const tempBody = physicsBody.clone;
+        physicsBody.velocity[1] += (physicsBody.accel.y - this.gravity) * this.timeStepFactor;
 
-        tempBody.velocity[1] -= this.gravity * this.timeStep / 1000;
-        for (let i = 0; i < tempBody.position.length; i++) {
-            tempBody.position[i] += tempBody.velocity[i] * this.timeStep / 1000;
+        if (physicsBody.velocity[1] !== 0) {
+            this.quadTree.remove(physicsBody, 'quadID');
+            physicsBody.aabb.add(new Victor(0, physicsBody.velocity[1] * this.timeStepFactor));
+            this.quadTree.put(physicsBody);
+
+            this.quadTree.get(physicsBody, (nearbyBody) => {
+                if (nearbyBody.quadID !== physicsBody.quadID && this.collides(physicsBody, nearbyBody)) {
+                    physicsBody.aabb.subtract(new Victor (0, physicsBody.velocity[1] * this.timeStepFactor));
+                    physicsBody.velocity[1] = 0;
+
+                    return false;
+                } else {
+                    return true;
+                }
+            });
         }
 
-        tempBody.position[1] = tempBody.position[1] < 0 ? 0 : tempBody.position[1];//TEST, everything fals to the ground
+        physicsBody.velocity[0] += (physicsBody.accel.x) * this.timeStepFactor;
 
-        //TODO collisions;
-        physicsBody = tempBody;
-    }
+        if (physicsBody.velocity[0] !== 0) {
+            this.quadTree.remove(physicsBody, 'quadID');
+            physicsBody.aabb.add(new Victor(physicsBody.velocity[0] * this.timeStepFactor, 0));
+            this.quadTree.put(physicsBody);
 
-    cameraSort() {
-        this.physicsBodyArr.sort((a,b) => Vec2(a.position).distance(Vec2(this.cameraBody.position)) - Vec2(b.position).distance(Vec2(this.cameraBody.position)));//sort by closest to cameraBody
+            this.quadTree.get(physicsBody, (nearbyBody) => {
+                if (nearbyBody.quadID !== physicsBody.quadID && this.collides(physicsBody, nearbyBody)) {
+                    physicsBody.aabb.subtract(new Victor (physicsBody.velocity[0] * this.timeStepFactor, 0));
+                    physicsBody.velocity[0] = 0;
+
+                    return false;
+                } else {
+                    return true;
+                }
+            });
+        }
+
+        if (physicsBody.y < 0) {
+            const height = physicsBody.h;
+            physicsBody.aabb.add(new Victor (physicsBody.x, 0), new Victor (physicsBody.aabb.upperRight.x, height));//test.  everything hits the ground;
+            physicsBody.velocity[1] = 0;
+        }
 
         return this;
     }
 
     collides(physicsBody1, physicsBody2) {
-        return !(physicsBody1.x + physicsBody1.w < physicsBody2.x
-            || physicsBody1.x > physicsBody2.x + physicsBody2.w
-            || physicsBody1.y + physicsBody1.h < physicsBody2.y
-            || physicsBody1.y > physicsBody2.y + physicsBody2.h);
+        return (physicsBody1.x < physicsBody2.x + physicsBody2.w &&
+            physicsBody1.x + physicsBody1.w > physicsBody2.x &&
+            physicsBody1.y < physicsBody2.y + physicsBody2.h &&
+            physicsBody1.y + physicsBody1.h > physicsBody2.y);
     }
 }

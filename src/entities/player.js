@@ -4,7 +4,7 @@ import Vec2 from 'victor';
 
 const PLAYER_WIDTH = 0.5;
 const PLAYER_HEIGHT = 1;
-const MOVE_SPEED = 0.4;
+const MOVE_SPEED = 0.8;
 const JUMP_VELOCITY = 1;
 
 const KEYBINDINGS = {

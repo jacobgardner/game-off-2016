@@ -3,7 +3,7 @@ export default class AABB {
         this._lowerLeft = lowerLeft;
         this._upperRight = upperRight;
 
-        this._calculateDimensions;
+        this._calculateDimensions();
     }
 
     _calculateDimensions() {

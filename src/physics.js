@@ -25,17 +25,17 @@ export default class Physics {
     }
 
     resolveBody(physicsBody) {
-        physicsBody.velocity[1] += (physicsBody.accel.y - this.gravity) * this.timeStepFactor;
+        physicsBody.velocity.y += (physicsBody.accel.y - this.gravity) * this.timeStepFactor;
 
-        if (physicsBody.velocity[1] !== 0) {
+        if (physicsBody.velocity.y !== 0) {
             this.quadTree.remove(physicsBody, 'quadID');
-            physicsBody.aabb.add(new Victor(0, physicsBody.velocity[1] * this.timeStepFactor));
+            physicsBody.aabb.add(new Victor(0, physicsBody.velocity.y * this.timeStepFactor));
             this.quadTree.put(physicsBody);
 
             this.quadTree.get(physicsBody, (nearbyBody) => {
                 if (nearbyBody.quadID !== physicsBody.quadID && this.collides(physicsBody, nearbyBody)) {
-                    physicsBody.aabb.subtract(new Victor (0, physicsBody.velocity[1] * this.timeStepFactor));
-                    physicsBody.velocity[1] = 0;
+                    physicsBody.aabb.subtract(new Victor (0, physicsBody.velocity.y * this.timeStepFactor));
+                    physicsBody.velocity.y = 0;
 
                     return false;
                 } else {
@@ -44,17 +44,17 @@ export default class Physics {
             });
         }
 
-        physicsBody.velocity[0] += (physicsBody.accel.x) * this.timeStepFactor;
+        physicsBody.velocity.x += (physicsBody.accel.x) * this.timeStepFactor;
 
-        if (physicsBody.velocity[0] !== 0) {
+        if (physicsBody.velocity.x !== 0) {
             this.quadTree.remove(physicsBody, 'quadID');
-            physicsBody.aabb.add(new Victor(physicsBody.velocity[0] * this.timeStepFactor, 0));
+            physicsBody.aabb.add(new Victor(physicsBody.velocity.x * this.timeStepFactor, 0));
             this.quadTree.put(physicsBody);
 
             this.quadTree.get(physicsBody, (nearbyBody) => {
                 if (nearbyBody.quadID !== physicsBody.quadID && this.collides(physicsBody, nearbyBody)) {
-                    physicsBody.aabb.subtract(new Victor (physicsBody.velocity[0] * this.timeStepFactor, 0));
-                    physicsBody.velocity[0] = 0;
+                    physicsBody.aabb.subtract(new Victor (physicsBody.velocity.x * this.timeStepFactor, 0));
+                    physicsBody.velocity.x = 0;
 
                     return false;
                 } else {
@@ -66,7 +66,7 @@ export default class Physics {
         if (physicsBody.y < 0) {
             const height = physicsBody.h;
             physicsBody.aabb.add(new Victor (physicsBody.x, 0), new Victor (physicsBody.aabb.upperRight.x, height));//test.  everything hits the ground;
-            physicsBody.velocity[1] = 0;
+            physicsBody.velocity.y = 0;
         }
 
         return this;

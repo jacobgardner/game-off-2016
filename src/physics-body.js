@@ -7,8 +7,8 @@ export default class PhysicsBody {
         const widthHeight = new Victor(this.w, this.h);
         this.aabb.add(position.subtract(this.aabb.lowerLeft), position.subtract(this.aabb.upperRight).add(widthHeight));
 
-        this.velocity = velocity.slice();//[units/s on x-axis, units/s on y-axis]
-        this.accel = accel;// Victor {x: u/(s^2), y: u/(s^2)}
+        this.velocity = velocity.clone();//[units/s on x-axis, units/s on y-axis]
+        this.accel = accel.clone();// Victor {x: u/(s^2), y: u/(s^2)}
         this.inView = false;
     }
 
@@ -29,7 +29,7 @@ export default class PhysicsBody {
     }
 
     clone() {
-        const returnBody = new PhysicsBody (new AABB(this.lowerLeft.clone(), this.upperRight.clone()), new Victor(this.x, this.y), this.velocity.slice(), this.accel.clone());
+        const returnBody = new PhysicsBody (new AABB(this.lowerLeft.clone(), this.upperRight.clone()), new Victor(this.x, this.y), this.velocity.clone(), this.accel.clone());
         returnBody.inVew = this.inView;
 
         return returnBody;

@@ -1,10 +1,28 @@
-import {ASPECT_RATIO} from './game-container';
+import Player from './entities/player';
+import Platform from './entities/platform';
+import Vec2 from 'victor';
+
 const UNITS_TALL = 20;
 
 
 export default class Level {
-    constructor() {
+    constructor(levelFile) {
         this.entities = [];
+
+        levelFile.forEach((row, y) => {
+            y = UNITS_TALL - y;
+
+            Array.prototype.forEach.call(row, (unit, x) => {
+                switch (unit.toLowerCase()) {
+                    case 'x':
+                        this.entities.push(new Platform(Vec2(x, y)));
+                        break;
+                    case 'p':
+                        this.entities.push(new Player(Vec2(x, y)));
+                        break;
+                }
+            });
+        });
     }
 
     _preDraw() {
@@ -27,21 +45,23 @@ export default class Level {
     draw() {
         this._preDraw();
 
+        const drawingContext = this.container.ctx;
 
+        for (const entity of this.entities) {
+            entity.draw(drawingContext);
+        }
         // TODO: Draw background
 
         // TODO: Intersect viewport with entities and draw the intersection
 
         // TODO: Draw HUD
 
-        this.container.ctx.fillStyle = 'rgba(255, 255, 255, 1)';
-        this.container.ctx.fillRect(0, 0, 1, 1);
-        this.container.ctx.fillRect(UNITS_TALL * ASPECT_RATIO - 1, UNITS_TALL - 1, 1, 1);
-
         this._postDraw();
     }
 
     simulate() {
-
+        for (const entity of this.entities) {
+            entity.simulate();
+        }
     }
 }

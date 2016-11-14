@@ -1,4 +1,4 @@
-import { SIMULATION_TIMESTEP } from './config';
+import { SIMULATION_TIMESTEP, ASPECT_RATIO } from './config';
 
 export default class GameContainer {
     constructor(canvas, initialScene) {

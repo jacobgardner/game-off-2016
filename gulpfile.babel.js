@@ -25,10 +25,18 @@ gulp.task('js', ['js-lint'], () => {
     const b = browserify({
         entries: './src/main.js',
         debug: true,
-        transform: [rollupify, babelify],
-    });
+    }).transform('rollupify', {
+        config: {
+            external: [
+                'victor',
+            ],
+        },
+    }).transform('babelify');
 
     return b.bundle()
+        .on('error', (err) => {
+            console.error(err.stack);
+        })
         .pipe(source('app.js'))
         .pipe(buffer())
         .pipe(sourcemaps.init({loadMaps: true}))

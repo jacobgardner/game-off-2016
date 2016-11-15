@@ -35,6 +35,9 @@ export default class Player {
 
         this.keyStates = {};
 
+        this.leftSpeed = 0;
+        this.rightSpeed = 0;
+
         this.enable();
     }
 
@@ -51,23 +54,29 @@ export default class Player {
     processAction(actionName, isActive) {
         const velocity = this.physicsBody.velocity;
 
+        // console.log(actionName, isActive);
+
         switch (actionName) {
             case 'LEFT':
-                velocity.x = isActive ? -MOVE_SPEED : 0;
+                this.leftSpeed = isActive ? -MOVE_SPEED : 0;
 
                 break;
             case 'RIGHT':
-                velocity.x = isActive ? MOVE_SPEED : 0;
+                this.rightSpeed = isActive ? MOVE_SPEED : 0;
 
                 break;
             case 'JUMP':
                 // TODO: We'll need to actually check to see if we're falling or not
                 //  velocity.y will be 0 at the top of jumps as well as when on the ground
-                velocity.y = velocity.y === 0 ? JUMP_VELOCITY : velocity.y;
+                if (isActive) {
+                    velocity.y = velocity.y === 0 ? JUMP_VELOCITY : velocity.y;
+                }
                 break;
             case 'ATTACK':
                 break;
         }
+
+        console.log(velocity);
     }
 
     processInput() {
@@ -80,10 +89,12 @@ export default class Player {
                 }
             }
 
-            if (isActive) {
-                this.processAction(action, isActive);
-            }
+            // if (isActive) {
+            this.processAction(action, isActive);
+            // }
         }
+
+        this.physicsBody.velocity.x = this.leftSpeed + this.rightSpeed;
     }
 
     simulate() {

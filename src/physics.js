@@ -1,10 +1,11 @@
-import QuadTree from 'simple-quadtree';
+import AABB from './aabb';
+import QuadTree from './qtree';
 import Victor from 'victor';
 
 export default class Physics {
     constructor(levelBoundArr, timeStep = 10, gravity = 9.82) {
         this.physicsBodyArr = new Array();
-        this.timeStepfactor = timeStep/1000;
+        this.timeStepFactor = timeStep/1000;
         this.gravity = gravity; //units/(s^2)
         this.quadTree = new QuadTree(0, 0, levelBoundArr[0], levelBoundArr[1]);
     }
@@ -25,16 +26,16 @@ export default class Physics {
     }
 
     resolveBody(physicsBody) {
-        physicsBody.velocity.y += (physicsBody.accel.y - this.gravity) * this.timeStepFactor;
+        physicsBody.velocity.add(Victor(0, (physicsBody.accel.y - this.gravity) * this.timeStepFactor));
 
-        if (physicsBody.velocity.y !== 0) {
+        if (physicsBody.velocity.y) {
             this.quadTree.remove(physicsBody, 'quadID');
-            physicsBody.aabb.add(new Victor(0, physicsBody.velocity.y * this.timeStepFactor));
+            physicsBody.aabb.add(Victor(0, physicsBody.velocity.y * this.timeStepFactor));
             this.quadTree.put(physicsBody);
 
             this.quadTree.get(physicsBody, (nearbyBody) => {
                 if (nearbyBody.quadID !== physicsBody.quadID && this.collides(physicsBody, nearbyBody)) {
-                    physicsBody.aabb.subtract(new Victor (0, physicsBody.velocity.y * this.timeStepFactor));
+                    physicsBody.aabb.subtract(Victor(0, physicsBody.velocity.y * this.timeStepFactor));
                     physicsBody.velocity.y = 0;
 
                     return false;
@@ -44,16 +45,16 @@ export default class Physics {
             });
         }
 
-        physicsBody.velocity.x += (physicsBody.accel.x) * this.timeStepFactor;
+        physicsBody.velocity.add(Victor(physicsBody.accel.x * this.timeStepFactor, 0));
 
-        if (physicsBody.velocity.x !== 0) {
+        if (physicsBody.velocity.x != 0) {
             this.quadTree.remove(physicsBody, 'quadID');
-            physicsBody.aabb.add(new Victor(physicsBody.velocity.x * this.timeStepFactor, 0));
+            physicsBody.aabb.add(Victor(physicsBody.velocity.x * this.timeStepFactor, 0));
             this.quadTree.put(physicsBody);
 
             this.quadTree.get(physicsBody, (nearbyBody) => {
                 if (nearbyBody.quadID !== physicsBody.quadID && this.collides(physicsBody, nearbyBody)) {
-                    physicsBody.aabb.subtract(new Victor (physicsBody.velocity.x * this.timeStepFactor, 0));
+                    physicsBody.aabb.subtract(Victor(physicsBody.velocity.x * this.timeStepFactor, 0));
                     physicsBody.velocity.x = 0;
 
                     return false;
@@ -64,10 +65,9 @@ export default class Physics {
         }
 
         if (physicsBody.y < 0) {
-            const height = physicsBody.h;
-            physicsBody.aabb.add(new Victor (physicsBody.x, 0), new Victor (physicsBody.aabb.upperRight.x, height));//test.  everything hits the ground;
+            physicsBody.aabb = new AABB(Victor(physicsBody.x, 0), Victor(physicsBody.w, physicsBody.h));//test.  everything hits the ground;
             physicsBody.velocity.y = 0;
-        }
+        }//*/
 
         return this;
     }

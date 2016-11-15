@@ -2,13 +2,13 @@ import AABB from './aabb';
 import Victor from 'victor';
 
 export default class PhysicsBody {
-    constructor(aabb, position, velocity, accel) {
+    constructor(aabb) {
         this.aabb = aabb;
-        const widthHeight = new Victor(this.w, this.h);
-        this.aabb.add(position.subtract(this.aabb.lowerLeft), position.subtract(this.aabb.upperRight).add(widthHeight));
+        //const widthHeight = new Victor(this.w, this.h);
+        //this.aabb.add(position.subtract(this.aabb.lowerLeft), position.subtract(this.aabb.upperRight).add(widthHeight));
 
-        this.velocity = velocity.clone();//[units/s on x-axis, units/s on y-axis]
-        this.accel = accel.clone();// Victor {x: u/(s^2), y: u/(s^2)}
+        this.velocity = Victor(0,0);//[units/s on x-axis, units/s on y-axis]
+        this.accel = Victor(0,0);// Victor {x: u/(s^2), y: u/(s^2)}
         this.inView = false;
     }
 

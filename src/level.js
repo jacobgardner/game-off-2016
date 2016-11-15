@@ -2,6 +2,7 @@ import Player from './entities/player';
 import Platform from './entities/platform';
 import Vec2 from 'victor';
 import Viewport from './viewport';
+import Physics from './physics';
 
 import { findAppropriateWidth } from './utils';
 
@@ -12,6 +13,7 @@ const UNITS_WIDE = findAppropriateWidth(UNITS_TALL);
 export default class Level {
     constructor(levelFile) {
         this.entities = [];
+        this.physics = new Physics([UNITS_WIDE, UNITS_TALL]);
 
         levelFile.forEach((row, y) => {
             y = UNITS_TALL - y;
@@ -22,14 +24,15 @@ export default class Level {
                         this.entities.push(new Platform(Vec2(x, y)));
                         break;
                     case 'p':
-                        this.player = new Player(Vec2(x, y));
+                        this.player = new Player(Vec2(x, 15));
+                        this.physics.addBody(this.player.physicsBody);
                         this.entities.push(this.player);
                         break;
                 }
             });
         });
 
-        this.viewport = new Viewport(Vec2(UNITS_WIDE / 2, UNITS_TALL / 2), UNITS_TALL / 5, 1);
+        this.viewport = new Viewport(Vec2(UNITS_WIDE / 2, UNITS_TALL / 2), UNITS_TALL , 5);
         this.showViewport = true;
     }
 
@@ -84,5 +87,7 @@ export default class Level {
         }
 
         this.viewport.updateViewport(this.player.physicsBody);
+
+        this.physics.resolveArea(this.viewport.physicsBody);
     }
 }

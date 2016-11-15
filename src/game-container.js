@@ -73,8 +73,8 @@ export default class GameContainer {
             if (scene.entities) {
                 for (const entity of scene.entities) {
                     if (entity.physicsBody) {
-                        this.ctx.fillText(`Player Pos: ${entity.physicsBody.x}, ${entity.physicsBody.y}\n
-                            Player velocity: ${entity.physicsBody.velocity.toString()}\n
+                        this.ctx.fillText(`Player Pos: ${entity.physicsBody.x}, ${entity.physicsBody.y}
+                            Player velocity: ${entity.physicsBody.velocity.toString()}
                             Player Accel: ${entity.physicsBody.accel.toString()}`, this.width - 100 , 16);
                     }
                 }

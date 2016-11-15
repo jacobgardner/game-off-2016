@@ -5,7 +5,7 @@ import PhysicsBody from '../physics-body';
 const PLAYER_WIDTH = 0.5;
 const PLAYER_HEIGHT = 1;
 const MOVE_SPEED = 8;
-const JUMP_VELOCITY = 20;
+const JUMP_VELOCITY = 9.82;
 
 const KEYBINDINGS = {
     // Cardinal Directions
@@ -66,7 +66,7 @@ export default class Player {
             case 'JUMP':
                 // TODO: We'll need to actually check to see if we're falling or not
                 //  velocity.y will be 0 at the top of jumps as well as when on the ground
-                //velocity.y = velocity.y === 0 ? JUMP_VELOCITY : velocity.y;
+                velocity.y = velocity.y === 0 ? JUMP_VELOCITY : velocity.y;
                 break;
             case 'ATTACK':
                 break;

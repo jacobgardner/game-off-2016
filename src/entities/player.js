@@ -55,13 +55,10 @@ export default class Player {
             case 'LEFT':
                 velocity.x = isActive ? -MOVE_SPEED : 0;
 
-                // TODO: Remove me once physics is merged
-                //this.physicsBody.aabb.add(Vec2(this.physicsBody.velocity.x * 0.1, 0));
                 break;
             case 'RIGHT':
                 velocity.x = isActive ? MOVE_SPEED : 0;
 
-                //this.physicsBody.aabb.add(Vec2(MOVE_SPEED * 0.1, 0));
                 break;
             case 'JUMP':
                 // TODO: We'll need to actually check to see if we're falling or not

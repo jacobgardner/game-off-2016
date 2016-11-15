@@ -28,7 +28,7 @@ export default class Physics {
     resolveBody(physicsBody) {
         physicsBody.velocity.add(Victor(0, (physicsBody.accel.y - this.gravity) * this.timeStepFactor));
 
-        if (physicsBody.velocity.y) {
+        if (physicsBody.velocity.y !== 0) {
             this.quadTree.remove(physicsBody, 'quadID');
             physicsBody.aabb.add(Victor(0, physicsBody.velocity.y * this.timeStepFactor));
             this.quadTree.put(physicsBody);
@@ -47,7 +47,7 @@ export default class Physics {
 
         physicsBody.velocity.add(Victor(physicsBody.accel.x * this.timeStepFactor, 0));
 
-        if (physicsBody.velocity.x != 0) {
+        if (physicsBody.velocity.x !== 0) {
             this.quadTree.remove(physicsBody, 'quadID');
             physicsBody.aabb.add(Victor(physicsBody.velocity.x * this.timeStepFactor, 0));
             this.quadTree.put(physicsBody);
@@ -67,7 +67,7 @@ export default class Physics {
         if (physicsBody.y < 0) {
             physicsBody.aabb = new AABB(Victor(physicsBody.x, 0), Victor(physicsBody.w, physicsBody.h));//test.  everything hits the ground;
             physicsBody.velocity.y = 0;
-        }//*/
+        }
 
         return this;
     }

@@ -69,6 +69,18 @@ export default class GameContainer {
         this.FPS = this.FPS * 0.9 + (now - this.lastFrameTime) * 0.1;
         this.ctx.fillText(`FPS: ${Math.round(1000 / this.FPS)}`, this.width - 10, 16);
 
+        for (const scene of this.sceneStack) {
+            if (scene.entities) {
+                for (const entity of scene.entities) {
+                    if (entity.physicsBody) {
+                        this.ctx.fillText(`Player Pos: ${entity.physicsBody.x}, ${entity.physicsBody.y}
+                            Player velocity: ${entity.physicsBody.velocity.toString()}
+                            Player Accel: ${entity.physicsBody.accel.toString()}`, this.width - 100 , 16);
+                    }
+                }
+            }
+        }
+
         this.lastFrameTime = now;
     }
 

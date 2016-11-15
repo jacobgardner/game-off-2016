@@ -1,11 +1,11 @@
 import AABB from '../aabb';
 import Vec2 from 'victor';
-// import PhysicsBody from '../physics-body';
+import PhysicsBody from '../physics-body';
 
 const PLAYER_WIDTH = 0.5;
 const PLAYER_HEIGHT = 1;
-const MOVE_SPEED = 0.8;
-const JUMP_VELOCITY = 1;
+const MOVE_SPEED = 8;
+const JUMP_VELOCITY = 9.82;
 
 const KEYBINDINGS = {
     // Cardinal Directions
@@ -26,12 +26,9 @@ export default class Player {
     constructor(origin) {
         const lowerLeft = Vec2(origin.x - PLAYER_WIDTH / 2, origin.y);
         const upperRight = Vec2(origin.x + PLAYER_WIDTH / 2, origin.y + PLAYER_HEIGHT);
-
+        const aabb = new AABB(lowerLeft, upperRight);
         // TODO: Lookup this physics shit later
-        // this.physicsBody = new PhysicsBody();
-        this.physicsBody = {};
-        this.physicsBody.aabb = new AABB(lowerLeft, upperRight);
-        this.physicsBody.velocity = Vec2(0, 0);
+        this.physicsBody = new PhysicsBody(aabb, lowerLeft);
 
         this.recordKeyDown = this.recordKeyDown.bind(this);
         this.recordKeyUp = this.recordKeyUp.bind(this);
@@ -58,13 +55,10 @@ export default class Player {
             case 'LEFT':
                 velocity.x = isActive ? -MOVE_SPEED : 0;
 
-                // TODO: Remove me once physics is merged
-                this.physicsBody.aabb.add(Vec2(-MOVE_SPEED * 0.1, 0));
                 break;
             case 'RIGHT':
                 velocity.x = isActive ? MOVE_SPEED : 0;
 
-                this.physicsBody.aabb.add(Vec2(MOVE_SPEED * 0.1, 0));
                 break;
             case 'JUMP':
                 // TODO: We'll need to actually check to see if we're falling or not

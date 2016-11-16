@@ -1,5 +1,6 @@
 import AABB from './aabb';
-import QuadTree from './qtree';
+import PhysicsBody from './physics-body';
+import QuadTree from './quadtree';
 import Victor from 'victor';
 
 export default class Physics {
@@ -7,11 +8,13 @@ export default class Physics {
         this.physicsBodyArr = new Array();
         this.timeStepFactor = timeStep/1000;
         this.gravity = gravity; //units/(s^2)
-        this.quadTree = new QuadTree(0, 0, levelBoundArr[0], levelBoundArr[1]);
+        this.quadTree = new QuadTree(Victor(0, 0), Victor(levelBoundArr[0], levelBoundArr[1]));
+        this.iDCount = 0;
     }
 
     addBody(physicsBody) {
-        physicsBody.quadID = this.physicsBodyArr.length;
+        this.iDCount++;
+        physicsBody.currentID = this.iDCount;
         this.physicsBodyArr.push(physicsBody);
         this.quadTree.put(physicsBody);
     }
@@ -19,7 +22,10 @@ export default class Physics {
     resolveArea(viewPortPhysicsBody) {
         for (const physicsBody of this.physicsBodyArr) {
             physicsBody.inView = this.collides(physicsBody, viewPortPhysicsBody);
+            //physicsBody.inview = physicsBody.aabb.collisionWith(viewPortPhysicsBody.aabb);
+            //if (physicsBody.inView) {
             this.resolveBody(physicsBody);
+            //}
         }
 
         return this;
@@ -29,44 +35,64 @@ export default class Physics {
         physicsBody.velocity.add(Victor(0, (physicsBody.accel.y - this.gravity) * this.timeStepFactor));
 
         if (physicsBody.velocity.y !== 0) {
-            this.quadTree.remove(physicsBody, 'quadID');
+            this.quadTree.remove(physicsBody, 'currentID');
             physicsBody.aabb.add(Victor(0, physicsBody.velocity.y * this.timeStepFactor));
             this.quadTree.put(physicsBody);
 
-            this.quadTree.get(physicsBody, (nearbyBody) => {
-                if (nearbyBody.quadID !== physicsBody.quadID && this.collides(physicsBody, nearbyBody)) {
-                    physicsBody.aabb.subtract(Victor(0, physicsBody.velocity.y * this.timeStepFactor));
-                    physicsBody.velocity.y = 0;
+            //const nearArr = this.quadTree.get(physicsBody);
+            //console.log(`length: ${nearArr.length}`);
 
-                    return false;
-                } else {
-                    return true;
+            let bool = true;
+            for (const nearbyBody of this.physicsBodyArr) {//testing all first
+                if (bool) {
+                    if (nearbyBody.currentID !== physicsBody.currentID && this.collides(physicsBody, nearbyBody)) {
+                    //if (nearbyBody.currentID !== physicsBody.currentID && physicsBody.aabb.collisionWith(nearbyBody.aabb)) {
+                        this.quadTree.remove(physicsBody, 'currentID');
+                        physicsBody.aabb.subtract(Victor(0, physicsBody.velocity.y * this.timeStepFactor));
+                        physicsBody.velocity.y = 0;
+                        this.quadTree.put(physicsBody);
+
+                        bool = false;
+                    } else {
+                        bool = true;
+                    }
                 }
-            });
+            }
         }
 
         physicsBody.velocity.add(Victor(physicsBody.accel.x * this.timeStepFactor, 0));
 
         if (physicsBody.velocity.x !== 0) {
-            this.quadTree.remove(physicsBody, 'quadID');
+            this.quadTree.remove(physicsBody, 'currentID');
             physicsBody.aabb.add(Victor(physicsBody.velocity.x * this.timeStepFactor, 0));
             this.quadTree.put(physicsBody);
 
-            this.quadTree.get(physicsBody, (nearbyBody) => {
-                if (nearbyBody.quadID !== physicsBody.quadID && this.collides(physicsBody, nearbyBody)) {
-                    physicsBody.aabb.subtract(Victor(physicsBody.velocity.x * this.timeStepFactor, 0));
-                    physicsBody.velocity.x = 0;
+            //const nearArr = this.quadTree.get(physicsBody);
+            let bool = true;
+            for (const nearbyBody of this.physicsBodyArr) {//Testing all first
+                if (bool) {
+                    if (nearbyBody.currentID !== physicsBody.currentID && this.collides(physicsBody, nearbyBody)) {
+                        this.quadTree.remove(physicsBody, 'currentID');
+                        physicsBody.aabb.subtract(Victor(physicsBody.velocity.x * this.timeStepFactor, 0));
+                        physicsBody.velocity.x = 0;
+                        this.quadTree.put(physicsBody);
 
-                    return false;
-                } else {
-                    return true;
+                        bool = false;
+                    } else {
+                        bool = true;
+                    }
                 }
-            });
+            }
         }
 
         if (physicsBody.y < 0) {
             physicsBody.aabb = new AABB(Victor(physicsBody.x, 0), Victor(physicsBody.w, physicsBody.h));//test.  everything hits the ground;
             physicsBody.velocity.y = 0;
+        }
+
+        if (physicsBody.x < 0) {
+            physicsBody.aabb = new AABB(Victor(0, physicsBody.y), Victor(physicsBody.w, physicsBody.h));//test.  everything hits the ground;
+            physicsBody.velocity.x = 0;
         }
 
         return this;

@@ -24,11 +24,12 @@ export default class Player {
      * @param  {Vec2} origin The center, bottom of the player
      */
     constructor(origin) {
+        this.name = 'Player';
+
         const lowerLeft = Vec2(origin.x - PLAYER_WIDTH / 2, origin.y);
         const upperRight = Vec2(origin.x + PLAYER_WIDTH / 2, origin.y + PLAYER_HEIGHT);
         const aabb = new AABB(lowerLeft, upperRight);
-        // TODO: Lookup this physics shit later
-        this.physicsBody = new PhysicsBody(aabb, lowerLeft);
+        this.physicsBody = new PhysicsBody(aabb);
 
         this.recordKeyDown = this.recordKeyDown.bind(this);
         this.recordKeyUp = this.recordKeyUp.bind(this);
@@ -76,7 +77,7 @@ export default class Player {
                 break;
         }
 
-        console.log(velocity);
+        //console.log(velocity);
     }
 
     processInput() {

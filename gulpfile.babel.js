@@ -29,6 +29,7 @@ gulp.task('js', ['js-lint'], () => {
         config: {
             external: [
                 'victor',
+                'simple-quadtree',
             ],
         },
     }).transform('babelify');

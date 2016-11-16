@@ -18,11 +18,11 @@ export default class PhysicsBody {
     }
 
     get w() {
-        return this.aabb.upperRight.width;
+        return this.aabb.width;
     }
 
     get h() {
-        return this.aabb.upperRight.height;
+        return this.aabb.height;
     }
 
     clone() {

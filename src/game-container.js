@@ -57,7 +57,7 @@ export default class GameContainer {
         this.ctx.save();
 
     }
-
+    
     postDraw() {
         this.ctx.restore();
 
@@ -67,19 +67,20 @@ export default class GameContainer {
         this.ctx.font = '16px sans-serif';
 
         this.FPS = this.FPS * 0.9 + (now - this.lastFrameTime) * 0.1;
-        this.ctx.fillText(`FPS: ${Math.round(1000 / this.FPS)}`, this.width - 10, 16);
+        let dataStr = `FPS: ${Math.round(1000 / this.FPS)}`;
 
         for (const scene of this.sceneStack) {
             if (scene.entities) {
-                for (const entity of scene.entities) {
-                    if (entity.physicsBody) {
-                        this.ctx.fillText(`Player Pos: ${entity.physicsBody.x}, ${entity.physicsBody.y}
-                            Player velocity: ${entity.physicsBody.velocity.toString()}
-                            Player Accel: ${entity.physicsBody.accel.toString()}`, this.width - 100 , 16);
-                    }
-                }
+                const entity = scene.entities.find(element => element.name === 'Player');
+                dataStr = `Player Pos: ${entity.physicsBody.x.toFixed(2)}, ${entity.physicsBody.y.toFixed(2)} | `
+                    +`Player Velocity: ${entity.physicsBody.velocity.x.toFixed(2)}, ${entity.physicsBody.velocity.y.toFixed(2)} | `
+                    +`Player Accel: ${entity.physicsBody.accel.x.toFixed(2)}, ${entity.physicsBody.accel.y.toFixed(2)} | `
+                    +`currentID: ${entity.physicsBody.currentID} | `
+                    + dataStr;
             }
         }
+
+        this.ctx.fillText(dataStr, this.width - 10, 16);
 
         this.lastFrameTime = now;
     }

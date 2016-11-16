@@ -13,7 +13,7 @@ export default class Viewport {
     constructor(center, minHeight, buffer=1) {
         const width = findAppropriateWidth(minHeight);
         this.aabb = new AABB(Vec2(center.x - width / 2, center.y - minHeight / 2), Vec2(center.x + width / 2, center.y + minHeight / 2));
-        this.physicsBody = new PhysicsBody(this.aabb, Vec2(this.aabb.lowerLeft.x, this.aabb.lowerLeft.y), Vec2(0,0), Vec2(0,0));
+        this.physicsBody = new PhysicsBody(this.aabb);
         this.buffer = buffer;
     }
 

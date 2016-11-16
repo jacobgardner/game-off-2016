@@ -55,7 +55,7 @@ export default class QuadTree {
         }
     }
 
-    findNode(obj, idStr) {
+    /*findNode(obj, idStr) {
         const index = this._objectArr.findIndex(element => element[idStr] === obj[idStr]);
 
         if (index !== -1) {
@@ -68,7 +68,7 @@ export default class QuadTree {
                 }
             }
         }
-    }
+    }*/
 
     _split() {
         const center = Victor(this._aabb.width / 2, this._aabb.height / 2);

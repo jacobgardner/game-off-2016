@@ -41,12 +41,23 @@ export default class AABB {
         return this._upperRight;
     }
 
+    set position(vec) {
+        const diff = vec.clone().subtract(this._lowerLeft);
+
+        this._lowerLeft = vec;
+        this._upperRight.add(diff);
+    }
+
+    get position() {
+        return this._lowerLeft;
+    }
+
     collisionWith(rhs) {
         return !(
-            this._upperLeft.x < rhs._lowerLeft.x ||
-            rhs._upperLeft.x < this._lowerLeft.x ||
-            this._lowerLeft.y > rhs._upperLeft.y ||
-            rhs._lowerLeft.y > this._upperLeft.y
+            this._upperRight.x < rhs._lowerLeft.x ||
+            rhs._upperRight.x < this._lowerLeft.x ||
+            this._lowerLeft.y > rhs._upperRight.y ||
+            rhs._lowerLeft.y > this._upperRight.y
         );
     }
 }

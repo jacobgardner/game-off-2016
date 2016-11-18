@@ -32,7 +32,7 @@ export default class Level {
                         this.physics.addBody(platform.physicsBody);
                         break;
                     case 'p':
-                        this.player = new Player(Vec2(x, 15));
+                        this.player = new Player(Vec2(x, y));
                         this.physics.addBody(this.player.physicsBody);
                         this.entities.push(this.player);
                         break;

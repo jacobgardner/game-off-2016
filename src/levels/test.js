@@ -14,10 +14,10 @@ const level = [
     '                                                                                                                                       ',
     '                                                                                                                                       ',
     '                                                                                                                                       ',
-    '       xxxxxxxx                                                                                                                        ',
+    '       xxxxxxxxx    x                                                                                                                  ',
     '                                                                                                                                       ',
     '    P                                                                                                                                  ',
-    'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',
+    'xxxxxxx x x x x xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',
 ];
 
 export default level;

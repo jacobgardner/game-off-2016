@@ -21,10 +21,9 @@ export default class Physics {
 
     resolveArea(viewPortPhysicsBody) {
         for (const physicsBody of this.physicsBodyArr) {
-            physicsBody.inView = this.collides(physicsBody, viewPortPhysicsBody);
-            //physicsBody.inview = physicsBody.aabb.collisionWith(viewPortPhysicsBody.aabb);
+            physicsBody.inview = physicsBody.aabb.collisionWith(viewPortPhysicsBody.aabb);
             //if (physicsBody.inView) {
-            this.resolveBody(physicsBody);
+                this.resolveBody(physicsBody);
             //}
         }
 
@@ -39,14 +38,12 @@ export default class Physics {
             physicsBody.aabb.add(Victor(0, physicsBody.velocity.y * this.timeStepFactor));
             this.quadTree.put(physicsBody);
 
-            //const nearArr = this.quadTree.get(physicsBody);
-            //console.log(`length: ${nearArr.length}`);
+            const nearArr = this.quadTree.get(physicsBody);
 
             let bool = true;
-            for (const nearbyBody of this.physicsBodyArr) {//testing all first
+            for (const nearbyBody of nearArr) {
                 if (bool) {
-                    if (nearbyBody.currentID !== physicsBody.currentID && this.collides(physicsBody, nearbyBody)) {
-                    //if (nearbyBody.currentID !== physicsBody.currentID && physicsBody.aabb.collisionWith(nearbyBody.aabb)) {
+                    if (nearbyBody.currentID !== physicsBody.currentID && physicsBody.aabb.collisionWith(nearbyBody.aabb)) {
                         this.quadTree.remove(physicsBody, 'currentID');
                         physicsBody.aabb.subtract(Victor(0, physicsBody.velocity.y * this.timeStepFactor));
                         physicsBody.velocity.y = 0;
@@ -67,9 +64,10 @@ export default class Physics {
             physicsBody.aabb.add(Victor(physicsBody.velocity.x * this.timeStepFactor, 0));
             this.quadTree.put(physicsBody);
 
-            //const nearArr = this.quadTree.get(physicsBody);
+            const nearArr = this.quadTree.get(physicsBody);
             let bool = true;
-            for (const nearbyBody of this.physicsBodyArr) {//Testing all first
+
+            for (const nearbyBody of nearArr) {
                 if (bool) {
                     if (nearbyBody.currentID !== physicsBody.currentID && this.collides(physicsBody, nearbyBody)) {
                         this.quadTree.remove(physicsBody, 'currentID');
@@ -86,13 +84,17 @@ export default class Physics {
         }
 
         if (physicsBody.y < 0) {
-            physicsBody.aabb = new AABB(Victor(physicsBody.x, 0), Victor(physicsBody.w, physicsBody.h));//test.  everything hits the ground;
+            this.quadTree.remove(physicsBody, 'currentID');
+            physicsBody.aabb.position = Victor(physicsBody.x, 0);//test.  everything hits the ground;
             physicsBody.velocity.y = 0;
+            this.quadTree.put(physicsBody);
         }
 
         if (physicsBody.x < 0) {
-            physicsBody.aabb = new AABB(Victor(0, physicsBody.y), Victor(physicsBody.w, physicsBody.h));//test.  everything hits the ground;
+            this.quadTree.remove(physicsBody, 'currentID');
+            physicsBody.aabb.position = Victor(0, physicsBody.y);//test.  everything hits the ground;
             physicsBody.velocity.x = 0;
+            this.quadTree.put(physicsBody);
         }
 
         return this;

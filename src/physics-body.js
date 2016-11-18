@@ -4,6 +4,9 @@ import Victor from 'victor';
 export default class PhysicsBody {
     constructor(aabb) {
         this.aabb = aabb;
+        //this.aabb = new AABB(Victor(aabb.lowerLeft.x + .001, aabb.lowerLeft.y + .001) , Victor(aabb.upperRight.x - .001, aabb.upperRight.y - .001));
+        //this.aabb.lowerLeft = Victor(aabb.lowerLeft.x + .001, aabb.lowerLeft.y + .001);
+        //this.aabb.upperRight = Victor(aabb.upperRight.x - .001, aabb.upperRight.y - .001);
         this.velocity = Victor(0,0);//[units/s on x-axis, units/s on y-axis]
         this.accel = Victor(0,0);// Victor {x: u/(s^2), y: u/(s^2)}
         this.inView = false;

@@ -1,3 +1,4 @@
+
 export default class AABB {
     constructor(lowerLeft, upperRight) {
         this._lowerLeft = lowerLeft;
@@ -7,8 +8,7 @@ export default class AABB {
     }
 
     _calculateDimensions() {
-        this.width = this._upperRight.x - this._lowerLeft.x;
-        this.height = this._upperRight.y - this._lowerLeft.y;
+        this._dimensions = this._upperRight.clone().subtract(this._lowerLeft);
     }
 
     add(vec) {
@@ -50,6 +50,19 @@ export default class AABB {
 
     get upperRight() {
         return this._upperRight;
+    }
+
+    get width() {
+        return this._dimensions.x;
+    }
+
+    get height() {
+        return this._dimensions.y;
+    }
+
+    // This method protects dimensions from being modified accidentally
+    get dimensions() {
+        return this._dimensions.clone();
     }
 
     collisionWith(rhs) {

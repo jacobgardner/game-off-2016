@@ -25,6 +25,7 @@ module.exports = {
         'space-before-blocks': ['error'],
         'no-new': ['error'],
         'new-cap': ['error'],
+        'arrow-parens': ['error', 'always'],
         indent: [
             'error',
             4,

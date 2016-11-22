@@ -16,6 +16,22 @@ export default class AABB {
         this._upperRight.add(vec);
     }
 
+    subtract(vec) {
+        this._lowerLeft.subtract(vec);
+        this._upperRight.subtract(vec);
+    }
+
+    set position(vec) {
+        const diff = vec.clone().subtract(this._lowerLeft);
+
+        this._lowerLeft = vec;
+        this._upperRight.add(diff);
+    }
+
+    get position() {
+        return this._lowerLeft;
+    }
+
     set lowerLeft(lowerLeft) {
         this._lowerLeft = lowerLeft;
 

@@ -66,10 +66,10 @@ export default class AABB {
 
     collisionWith(rhs) {
         return !(
-            this._upperLeft.x < rhs._lowerLeft.x ||
-            rhs._upperLeft.x < this._lowerLeft.x ||
-            this._lowerLeft.y > rhs._upperLeft.y ||
-            rhs._lowerLeft.y > this._upperLeft.y
+            this._upperRight.x < rhs._lowerLeft.x ||
+            rhs._upperRight.x < this._lowerLeft.x ||
+            this._lowerLeft.y > rhs._upperRight.y ||
+            rhs._lowerLeft.y > this._upperRight.y
         );
     }
 }

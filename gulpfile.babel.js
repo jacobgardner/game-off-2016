@@ -1,7 +1,5 @@
 import gulp from 'gulp';
 import browserify from 'browserify';
-import rollupify from 'rollupify';
-import babelify from 'babelify';
 import source from 'vinyl-source-stream';
 import buffer from 'vinyl-buffer';
 import sourcemaps from 'gulp-sourcemaps';
@@ -25,13 +23,6 @@ gulp.task('js', ['js-lint'], () => {
     const b = browserify({
         entries: './src/main.js',
         debug: true,
-    }).transform('rollupify', {
-        config: {
-            external: [
-                'victor',
-                'simple-quadtree',
-            ],
-        },
     }).transform('babelify');
 
     return b.bundle()

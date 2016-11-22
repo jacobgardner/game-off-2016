@@ -7,8 +7,7 @@ export default class AABB {
     }
 
     _calculateDimensions() {
-        this.width = this._upperRight.x - this._lowerLeft.x;
-        this.height = this._upperRight.y - this._lowerLeft.y;
+        this._dimensions = this._upperRight.clone().subtract(this._lowerLeft);
     }
 
     add(vec) {
@@ -19,6 +18,17 @@ export default class AABB {
     subtract(vec) {
         this._lowerLeft.subtract(vec);
         this._upperRight.subtract(vec);
+    }
+
+    set position(vec) {
+        const diff = vec.clone().subtract(this._lowerLeft);
+
+        this._lowerLeft = vec;
+        this._upperRight.add(diff);
+    }
+
+    get position() {
+        return this._lowerLeft;
     }
 
     set lowerLeft(lowerLeft) {
@@ -41,23 +51,25 @@ export default class AABB {
         return this._upperRight;
     }
 
-    set position(vec) {
-        const diff = vec.clone().subtract(this._lowerLeft);
-
-        this._lowerLeft = vec;
-        this._upperRight.add(diff);
+    get width() {
+        return this._dimensions.x;
     }
 
-    get position() {
-        return this._lowerLeft;
+    get height() {
+        return this._dimensions.y;
+    }
+
+    // This method protects dimensions from being modified accidentally
+    get dimensions() {
+        return this._dimensions.clone();
     }
 
     collisionWith(rhs) {
         return !(
-            this._upperRight.x < rhs._lowerLeft.x ||
-            rhs._upperRight.x < this._lowerLeft.x ||
-            this._lowerLeft.y > rhs._upperRight.y ||
-            rhs._lowerLeft.y > this._upperRight.y
+            this._upperLeft.x < rhs._lowerLeft.x ||
+            rhs._upperLeft.x < this._lowerLeft.x ||
+            this._lowerLeft.y > rhs._upperLeft.y ||
+            rhs._lowerLeft.y > this._upperLeft.y
         );
     }
 }

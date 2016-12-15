@@ -1,7 +1,5 @@
 import gulp from 'gulp';
 import browserify from 'browserify';
-import rollupify from 'rollupify';
-import babelify from 'babelify';
 import source from 'vinyl-source-stream';
 import buffer from 'vinyl-buffer';
 import sourcemaps from 'gulp-sourcemaps';
@@ -9,10 +7,14 @@ import browserSyncCreate from 'browser-sync';
 import ghPages from 'gulp-gh-pages';
 import eslint from 'gulp-eslint';
 import stylelint from 'gulp-stylelint';
+import gulpif from 'gulp-if';
+
+import uglify from 'gulp-uglify';
 
 import postcss from 'gulp-postcss';
 import autoprefixer from 'autoprefixer';
 import postcssImport from 'postcss-import';
+import cssnano from 'cssnano';
 
 const postcssProcessors = [postcssImport, autoprefixer];
 
@@ -21,16 +23,12 @@ const browserSync = browserSyncCreate.create();
 const SOURCE_FILES = './src/**/*.js';
 const CSS_FILES = './css/**/*.css';
 
-gulp.task('js', ['js-lint'], () => {
+let PRODUCTION = false;
+
+function buildJS() {
     const b = browserify({
         entries: './src/main.js',
         debug: true,
-    }).transform('rollupify', {
-        config: {
-            external: [
-                'victor',
-            ],
-        },
     }).transform('babelify');
 
     return b.bundle()
@@ -40,9 +38,12 @@ gulp.task('js', ['js-lint'], () => {
         .pipe(source('app.js'))
         .pipe(buffer())
         .pipe(sourcemaps.init({loadMaps: true}))
+        .pipe(gulpif(PRODUCTION, uglify()))
         .pipe(sourcemaps.write('./'))
         .pipe(gulp.dest('./dist/js'));
-});
+}
+
+gulp.task('js', ['js-lint'], buildJS);
 
 gulp.task('js-watch', ['js'], () => {
     gulp.watch(SOURCE_FILES, ['js', () => {
@@ -56,14 +57,16 @@ gulp.task('js-lint', () => {
         .pipe(eslint.format());
 });
 
-gulp.task('css', ['css-lint'], () => {
+function buildCSS() {
     return gulp.src('./css/main.css')
         .pipe(sourcemaps.init())
         .pipe(postcss(postcssProcessors))
         .pipe(sourcemaps.write('./'))
         .pipe(gulp.dest('./dist/css'))
         .pipe(browserSync.stream());
-});
+}
+
+gulp.task('css', ['css-lint'], buildCSS);
 
 gulp.task('css-watch', ['css'], () => {
     gulp.watch(CSS_FILES, ['css']);
@@ -81,7 +84,15 @@ gulp.task('css-lint', () => {
 
 gulp.task('watch', ['js-watch', 'css-watch']);
 
-gulp.task('publish', () => {
+gulp.task('prod', () => {
+    postcssProcessors.push(cssnano);
+    PRODUCTION = true;
+
+    buildJS();
+    buildCSS();
+});
+
+gulp.task('publish', ['prod'], () => {
     gulp.src(['./dist/**/*', './index.html'], {base: '.'})
         .pipe(ghPages());
 });

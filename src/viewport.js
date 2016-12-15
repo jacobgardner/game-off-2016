@@ -1,6 +1,7 @@
 import { findAppropriateWidth } from './utils';
 import AABB from './aabb';
 import Vec2 from 'victor';
+import PhysicsBody from './physics-body';
 
 export default class Viewport {
     /**
@@ -12,6 +13,7 @@ export default class Viewport {
     constructor(center, minHeight, buffer=1) {
         const width = findAppropriateWidth(minHeight);
         this.aabb = new AABB(Vec2(center.x - width / 2, center.y - minHeight / 2), Vec2(center.x + width / 2, center.y + minHeight / 2));
+        this.physicsBody = new PhysicsBody(this.aabb);
         this.buffer = buffer;
     }
 

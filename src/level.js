@@ -1,11 +1,13 @@
 import Player from './entities/player';
+import Enemy from './entities/enemy';
 import Platform from './entities/platform';
 import Vec2 from 'victor';
 import Viewport from './viewport';
+import Physics from './physics';
 
 import { findAppropriateWidth } from './utils';
 
-import { UNITS_TALL } from './config';
+import { UNITS_TALL, SIMULATION_TIMESTEP } from './config';
 const UNITS_WIDE = findAppropriateWidth(UNITS_TALL);
 
 
@@ -13,23 +15,38 @@ export default class Level {
     constructor(levelFile) {
         this.entities = [];
 
+        let width = 0;
+        for (const row of levelFile) {
+            width = row.length > width ? row.length : width;
+        }
+        this.physics = new Physics([levelFile.length, width], SIMULATION_TIMESTEP);
+
         levelFile.forEach((row, y) => {
             y = UNITS_TALL - y;
 
             Array.prototype.forEach.call(row, (unit, x) => {
+                let platform = new Platform(Vec2(0,0));
                 switch (unit.toLowerCase()) {
+                    case 'e':
+                        platform = new Enemy(Vec2(x,y));
+                        this.entities.push(platform);
+                        this.physics.addBody(platform.physicsBody);
+                        break;
                     case 'x':
-                        this.entities.push(new Platform(Vec2(x, y)));
+                        platform = new Platform(Vec2(x, y));
+                        this.entities.push(platform);
+                        this.physics.addBody(platform.physicsBody);
                         break;
                     case 'p':
                         this.player = new Player(Vec2(x, y));
+                        this.physics.addBody(this.player.physicsBody);
                         this.entities.push(this.player);
                         break;
                 }
             });
         });
 
-        this.viewport = new Viewport(Vec2(UNITS_WIDE / 2, UNITS_TALL / 2), UNITS_TALL / 5, 1);
+        this.viewport = new Viewport(Vec2(UNITS_WIDE / 2, UNITS_TALL / 2), UNITS_TALL , 1);
         this.showViewport = true;
     }
 
@@ -84,5 +101,7 @@ export default class Level {
         }
 
         this.viewport.updateViewport(this.player.physicsBody);
+
+        this.physics.resolveArea(this.viewport.physicsBody);
     }
 }

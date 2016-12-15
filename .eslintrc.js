@@ -23,6 +23,9 @@ module.exports = {
         'brace-style': ['error', '1tbs'],
         'no-console': 0,
         'space-before-blocks': ['error'],
+        'no-new': ['error'],
+        'new-cap': ['error'],
+        'arrow-parens': ['error', 'always'],
         indent: [
             'error',
             4,

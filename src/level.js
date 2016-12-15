@@ -1,4 +1,5 @@
 import Player from './entities/player';
+import Enemy from './entities/enemy';
 import Platform from './entities/platform';
 import Vec2 from 'victor';
 import Viewport from './viewport';
@@ -26,6 +27,11 @@ export default class Level {
             Array.prototype.forEach.call(row, (unit, x) => {
                 let platform = new Platform(Vec2(0,0));
                 switch (unit.toLowerCase()) {
+                    case 'e':
+                        platform = new Enemy(Vec2(x,y));
+                        this.entities.push(platform);
+                        this.physics.addBody(platform.physicsBody);
+                        break;
                     case 'x':
                         platform = new Platform(Vec2(x, y));
                         this.entities.push(platform);
